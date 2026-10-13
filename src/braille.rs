@@ -270,6 +270,7 @@ fn get_braille_code(code: &str) -> Option<&'static dyn BrailleCode> {
         "French" => &French,
         "LaTeX" => &LaTeX,
         "ASCIIMath" => &AsciiMath,
+        "Dedicon" => &Dedicon,
         _ => return None,
     });
 }
@@ -285,6 +286,7 @@ struct French;
 #[allow(non_camel_case_types)]
 struct LaTeX;
 struct AsciiMath;
+struct Dedicon;
 
 impl BrailleCode for Nemeth {
     fn name(&self) -> &'static str { "Nemeth" }
@@ -375,6 +377,12 @@ impl BrailleCode for LaTeX {
 
 impl BrailleCode for AsciiMath {
     fn name(&self) -> &'static str { "ASCIIMath" }
+    fn cleanup(&self, pref_manager: Ref<PreferenceManager>, raw_braille: String) -> String { ASCIIMath_cleanup(pref_manager, raw_braille) }
+}
+
+impl BrailleCode for Dedicon {
+    fn name(&self) -> &'static str { "Dedicon" }
+    // ASCII output like ASCIIMath: reuse its whitespace cleanup until Dedicon needs its own
     fn cleanup(&self, pref_manager: Ref<PreferenceManager>, raw_braille: String) -> String { ASCIIMath_cleanup(pref_manager, raw_braille) }
 }
 
@@ -619,7 +627,7 @@ pub fn get_navigation_node_from_braille_position(mathml: Element, position: usiz
             }
             // We can't know what encoding the user is using for LaTeX and ASCIIMath -- assume 8-dot braille
             let braille_code = PreferenceManager::get().borrow().pref_to_string("BrailleCode");
-            if braille_code == "LaTeX" || braille_code == "ASCIIMath" {
+            if braille_code == "LaTeX" || braille_code == "ASCIIMath" || braille_code == "Dedicon" {
                 return text.len();
             } else {    
                 return match leaf_name {

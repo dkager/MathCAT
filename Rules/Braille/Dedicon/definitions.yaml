@@ -1,0 +1,81 @@
+---
+# Dedicon definitions
+# Shared braille definitions (also used during canonicalization)
+- include: "../definitions.yaml"
+
+# Operators that always get a space before and after them (see the mo rule in Dedicon_Rules.yaml)
+- AlwaysSpacing: {
+    "=",
+  }
+
+# Operators that get a space before and after them when used between two terms (see the mo rule in Dedicon_Rules.yaml)
+# Based on AddSpacing in ../ASCIIMath/definitions.yaml; extend this list as more Dedicon rules become known
+# The colon (also as ratio U+2236) gets spaces around it ("54 : 9"), unlike the slash ("54/9")
+# Relations, logic, arrows and set operators follow the Dedicon examples: "P of (Q en R)", "n --> inf",
+# "{2} deelverz {1, 2, 3}", "2 element Z"
+- AddSpacing: {
+    "+", "-", "−", "–", "±",
+    "*", "×", "·", "⋅", "∗",
+    ":", "∶",
+    "<", ">", "≤", "≥", "≠", "≈", "≙",
+    "∧", "∨", "⊻", "→", "↔", "←", "↑", "↓", "⇒", "⇔",
+    "∈", "∉", "∩", "∪", "⊂", "⊄", "⊆", "⊈", "⊃", "⊅", "⊇", "⊉",
+    "∥", "⊥",
+  }
+
+# Function names that are separated by a space from their argument (see the named-functions rule in Dedicon_Rules.yaml)
+# Based on FunctionNames in ../ASCIIMath/definitions.yaml, without the ASCIIMath-only keywords
+# (lambda, and, or, if, abs, norm, floor, ceil) and without lim: Dedicon writes "lim{...}u_n" without a space
+- FunctionNames: {
+    "sin", "cos", "tan", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh", "cot", "coth", "sech", "csch", "sec", "csc",
+    "Sin", "Cos", "Tan", "Arcsin", "Arccos", "Arctan", "Sinh", "Cosh", "Tanh", "Cot", "Sec", "Csc",
+    "log", "lg", "ln", "Log", "Ln", "exp",
+    "det", "dim", "mod", "gcd", "lcm", "lub", "glb", "min", "max",
+  }
+
+# Operators that get a space after them, but not before (see the mo rule in Dedicon_Rules.yaml)
+# The comma separates elements and arguments: "{1, 2, 3}", "f(x, y, z)"
+# A decimal comma is part of a number (mn) and is not affected: "1,01"
+- SpaceAfter: {
+    ",",
+  }
+
+# Quantifiers: the variable after them is separated by a space from the formula that follows
+# (see the rule in Dedicon_Rules.yaml): "er is een x (Ax of voor alle y Bxy)"
+- Quantifiers: {
+    "∀", "∃",
+  }
+
+# Large operators whose under/over scripts are written as a range in braces, directly followed by the expression:
+#   "~S{k = 0..n}u_k", "Intg{a..b}f(x)dx", "lim{n --> inf}u_n" (see the large-op-limits rule in Dedicon_Rules.yaml)
+# Same list as MovableLimitsLargeOps in ../ASCIIMath/definitions.yaml
+- MovableLimitsLargeOps: {
+    "⨜", "⨛", "⨚", "⨙", "⨘", "⨗", "⨖", "⨕", "⨔", "⨓", "⨒", "⨑", "⨐", "⨏", "⨎", "⨍",
+    "⨌", "∳", "∲", "∱", "∰", "∯", "∮", "∭", "∬", "∫",
+    "⨋", "∐", "∏", "⫿", "⫼", "⨉", "⨈", "⨇", "⨆", "⨅",
+    "⨂", "⨀", "⋂", "⋁", "⋀", "⨄", "⨃", "⋃", "⨁", "⨞", "⨝", "⨊", "∑",
+    "lim"
+  }
+
+# Marks over an expression and their Dedicon text (see the accents rule in Dedicon_Rules.yaml):
+#   overbar (complex conjugate) "{-z", vector arrow "{->a"; there is no closing brace
+# Based on Accents in ../ASCIIMath/definitions.yaml; Dedicon defines only these two
+- Accents: {
+    "¯": "-", "‾": "-", "–": "-", "−": "-", "-": "-", "_": "-",
+    "→": "->", "⃗": "->",
+  }
+
+# Brackets: no space directly after an opening or before a closing bracket (see the mfrac rule in Dedicon_Rules.yaml)
+# "|" is left out on purpose: it is both an opening and a closing bracket
+- OpeningBrackets: {
+    "(", "[", "{", "⟨",
+  }
+- ClosingBrackets: {
+    ")", "]", "}", "⟩",
+  }
+
+# Division signs written as "/" -- in principle without spaces
+# Exception: spaces when needed to end a sub- or superscript, e.g. "u_n / v_n" (see the mo and mfrac rules)
+- DivisionSlash: {
+    "/", "÷", "∕",
+  }

@@ -1,0 +1,288 @@
+---
+# Dedicon: common characters and the Dedicon symbol list
+# Rarely used characters are in unicode-full.yaml
+# Letters and digits are copied verbatim from ../ASCIIMath/unicode.yaml
+
+ - " ": [t: "𝐖"]                         # 0x20
+ - " ": [t: "𝐰"]                         # 0xa0 no-break space: a space that is kept ("1 00"); between groups of
+                                         #   digits in a number it becomes a point, see block-separators in Dedicon_Rules.yaml
+
+# digits
+ - "0": [t: "0"]                         # 0x30
+ - "1": [t: "1"]                         # 0x31
+ - "2": [t: "2"]                         # 0x32
+ - "3": [t: "3"]                         # 0x33
+ - "4": [t: "4"]                         # 0x34
+ - "5": [t: "5"]                         # 0x35
+ - "6": [t: "6"]                         # 0x36
+ - "7": [t: "7"]                         # 0x37
+ - "8": [t: "8"]                         # 0x38
+ - "9": [t: "9"]                         # 0x39
+
+# letters: variables are passed through literally
+ - "A": [t: "A"]                         # 0x41
+ - "B": [t: "B"]                         # 0x42
+ - "C": [t: "C"]                         # 0x43
+ - "D": [t: "D"]                         # 0x44
+ - "E": [t: "E"]                         # 0x45
+ - "F": [t: "F"]                         # 0x46
+ - "G": [t: "G"]                         # 0x47
+ - "H": [t: "H"]                         # 0x48
+ - "I": [t: "I"]                         # 0x49
+ - "J": [t: "J"]                         # 0x4a
+ - "K": [t: "K"]                         # 0x4b
+ - "L": [t: "L"]                         # 0x4c
+ - "M": [t: "M"]                         # 0x4d
+ - "N": [t: "N"]                         # 0x4e
+ - "O": [t: "O"]                         # 0x4f
+ - "P": [t: "P"]                         # 0x50
+ - "Q": [t: "Q"]                         # 0x51
+ - "R": [t: "R"]                         # 0x52
+ - "S": [t: "S"]                         # 0x53
+ - "T": [t: "T"]                         # 0x54
+ - "U": [t: "U"]                         # 0x55
+ - "V": [t: "V"]                         # 0x56
+ - "W": [t: "W"]                         # 0x57
+ - "X": [t: "X"]                         # 0x58
+ - "Y": [t: "Y"]                         # 0x59
+ - "Z": [t: "Z"]                         # 0x5a
+ - "a": [t: "a"]                         # 0x61
+ - "b": [t: "b"]                         # 0x62
+ - "c": [t: "c"]                         # 0x63
+ - "d": [t: "d"]                         # 0x64
+ - "e": [t: "e"]                         # 0x65
+ - "f": [t: "f"]                         # 0x66
+ - "g": [t: "g"]                         # 0x67
+ - "h": [t: "h"]                         # 0x68
+ - "i": [t: "i"]                         # 0x69
+ - "j": [t: "j"]                         # 0x6a
+ - "k": [t: "k"]                         # 0x6b
+ - "l": [t: "l"]                         # 0x6c
+ - "m": [t: "m"]                         # 0x6d
+ - "n": [t: "n"]                         # 0x6e
+ - "o": [t: "o"]                         # 0x6f
+ - "p": [t: "p"]                         # 0x70
+ - "q": [t: "q"]                         # 0x71
+ - "r": [t: "r"]                         # 0x72
+ - "s": [t: "s"]                         # 0x73
+ - "t": [t: "t"]                         # 0x74
+ - "u": [t: "u"]                         # 0x75
+ - "v": [t: "v"]                         # 0x76
+ - "w": [t: "w"]                         # 0x77
+ - "x": [t: "x"]                         # 0x78
+ - "y": [t: "y"]                         # 0x79
+ - "z": [t: "z"]                         # 0x7a
+
+# arithmetic operators: + - * / (spaces around them, where needed, come from the mo rule in Dedicon_Rules.yaml)
+ - "+": [t: "+"]                         # 0x2b
+ - "-": [t: "-"]                         # 0x2d
+ - "−": [t: "-"]                         # 0x2212 minus sign
+ - "–": [t: "-"]                         # 0x2013 en dash
+ - "*": [t: "*"]                         # 0x2a
+ - "×": [t: "*"]                         # 0xd7
+ - "·": [t: "*"]                         # 0xb7
+ - "⋅": [t: "*"]                         # 0x22c5
+ - "∗": [t: "*"]                         # 0x2217
+ - "/": [t: "/"]                         # 0x2f
+ - "÷": [t: "/"]                         # 0xf7
+ - "∕": [t: "/"]                         # 0x2215 division slash
+
+# the colon stays a colon, also as division or ratio sign
+ - ":": [t: ":"]                         # 0x3a
+ - "∶": [t: ":"]                         # 0x2236 ratio
+
+# invisible operators (from ../ASCIIMath/unicode.yaml): Dedicon keeps them invisible, so 3x stays 3x
+# (they are not in AddSpacing; next to a fraction the space comes from the mfrac rule in Dedicon_Rules.yaml)
+ - "⁡": [t: ""]                          # 0x2061
+ - "⁢": [t: ""]                          # 0x2062
+ - "⁣": [t: ""]                          # 0x2063
+ - "⁤": [t: ""]                          # 0x2064
+
+# vulgar fractions (all Unicode characters named VULGAR FRACTION): written as a linear fraction, like the mfrac rule
+# The removable spaces (𝐖) keep "2½" from becoming "21/2" (twenty-one halves): it becomes "2 1/2";
+# cleanup removes them again where they are not needed, e.g. after an opening bracket: "(½)" -> "(1/2)"
+ - "¼": [t: "𝐖1/4𝐖"]                     # 0xbc vulgar fraction one quarter
+ - "½": [t: "𝐖1/2𝐖"]                     # 0xbd vulgar fraction one half
+ - "¾": [t: "𝐖3/4𝐖"]                     # 0xbe vulgar fraction three quarters
+ - "⅐": [t: "𝐖1/7𝐖"]                     # 0x2150 vulgar fraction one seventh
+ - "⅑": [t: "𝐖1/9𝐖"]                     # 0x2151 vulgar fraction one ninth
+ - "⅒": [t: "𝐖1/10𝐖"]                    # 0x2152 vulgar fraction one tenth
+ - "⅓": [t: "𝐖1/3𝐖"]                     # 0x2153 vulgar fraction one third
+ - "⅔": [t: "𝐖2/3𝐖"]                     # 0x2154 vulgar fraction two thirds
+ - "⅕": [t: "𝐖1/5𝐖"]                     # 0x2155 vulgar fraction one fifth
+ - "⅖": [t: "𝐖2/5𝐖"]                     # 0x2156 vulgar fraction two fifths
+ - "⅗": [t: "𝐖3/5𝐖"]                     # 0x2157 vulgar fraction three fifths
+ - "⅘": [t: "𝐖4/5𝐖"]                     # 0x2158 vulgar fraction four fifths
+ - "⅙": [t: "𝐖1/6𝐖"]                     # 0x2159 vulgar fraction one sixth
+ - "⅚": [t: "𝐖5/6𝐖"]                     # 0x215a vulgar fraction five sixths
+ - "⅛": [t: "𝐖1/8𝐖"]                     # 0x215b vulgar fraction one eighth
+ - "⅜": [t: "𝐖3/8𝐖"]                     # 0x215c vulgar fraction three eighths
+ - "⅝": [t: "𝐖5/8𝐖"]                     # 0x215d vulgar fraction five eighths
+ - "⅞": [t: "𝐖7/8𝐖"]                     # 0x215e vulgar fraction seven eighths
+ - "↉": [t: "𝐖0/3𝐖"]                     # 0x2189 vulgar fraction zero thirds
+
+# Dedicon symbols: general (algemene symbolen)
+# Temperatures get a space before the degree sign: "-14 grC" (as an angle after a number: "30 gr", see Dedicon_Rules.yaml)
+ - "‰": [t: "%%"]                            # 0x2030 per mille sign
+ - "°": [t: "gr"]                            # 0xb0 degree sign
+ - "℃": [t: "𝐰grC"]                         # 0x2103 degree celsius (MathCAT merges ° C into it)
+ - "℉": [t: "𝐰grF"]                         # 0x2109 degree fahrenheit (MathCAT merges ° F into it)
+ - "±": [t: "+-"]                            # 0xb1 plus-minus sign
+ - "≤": [t: "<="]                            # 0x2264 less-than or equal to
+ - "≥": [t: ">="]                            # 0x2265 greater-than or equal to
+ - "≠": [t: "=niet"]                         # 0x2260 not equal to
+ - "≈": [t: "=ong"]                          # 0x2248 almost equal to
+ - "≙": [t: "=^"]                            # 0x2259 estimates
+ - "∑": [t: "~S"]                            # 0x2211 n-ary summation
+ - "∏": [t: "~P"]                            # 0x220f n-ary product
+
+# superscript digits (e.g. "m²" typed as one mi): written as a power, like the msup rule: "m^2"
+ - "²": [t: "^2"]                            # 0xb2 superscript two
+ - "³": [t: "^3"]                            # 0xb3 superscript three
+
+# Dedicon symbols: calculus (analyse)
+ - "′": [t: "'"]                             # 0x2032 prime
+ - "″": [t: "\""]                            # 0x2033 double prime
+ - "∞": [t: "inf"]                           # 0x221e infinity
+ - "∫": [t: "Intg"]                          # 0x222b integral
+
+# Dedicon symbols: Greek letters: "~" followed by a Latin letter
+# NOTE: eta, theta and chi deliberately use NON-ASCII letters, exactly as in the Dedicon table:
+#   eta ~û / ~Û, theta ~ô / ~Ô, chi ~ç / ~Ç
+#   This is an intended exception to ASCII-only output, following the Dedicon symbol table; do not 'fix' these to ASCII.
+ - "Α": [t: "~A"]                            # 0x391 greek capital letter alpha
+ - "Β": [t: "~B"]                            # 0x392 greek capital letter beta
+ - "Γ": [t: "~G"]                            # 0x393 greek capital letter gamma
+ - "Δ": [t: "~D"]                            # 0x394 greek capital letter delta
+ - "Ε": [t: "~E"]                            # 0x395 greek capital letter epsilon
+ - "Ζ": [t: "~Z"]                            # 0x396 greek capital letter zeta
+ - "Η": [t: "~Û"]                            # 0x397 greek capital letter eta
+ - "Θ": [t: "~Ô"]                            # 0x398 greek capital letter theta
+ - "Ι": [t: "~I"]                            # 0x399 greek capital letter iota
+ - "Κ": [t: "~K"]                            # 0x39a greek capital letter kappa
+ - "Λ": [t: "~L"]                            # 0x39b greek capital letter lamda
+ - "Μ": [t: "~M"]                            # 0x39c greek capital letter mu
+ - "Ν": [t: "~N"]                            # 0x39d greek capital letter nu
+ - "Ξ": [t: "~X"]                            # 0x39e greek capital letter xi
+ - "Ο": [t: "~O"]                            # 0x39f greek capital letter omicron
+ - "Π": [t: "~P"]                            # 0x3a0 greek capital letter pi
+ - "Ρ": [t: "~R"]                            # 0x3a1 greek capital letter rho
+ - "Σ": [t: "~S"]                            # 0x3a3 greek capital letter sigma
+ - "Τ": [t: "~T"]                            # 0x3a4 greek capital letter tau
+ - "Υ": [t: "~U"]                            # 0x3a5 greek capital letter upsilon
+ - "Φ": [t: "~F"]                            # 0x3a6 greek capital letter phi
+ - "Χ": [t: "~Ç"]                            # 0x3a7 greek capital letter chi
+ - "Ψ": [t: "~Y"]                            # 0x3a8 greek capital letter psi
+ - "Ω": [t: "~W"]                            # 0x3a9 greek capital letter omega
+ - "α": [t: "~a"]                            # 0x3b1 greek small letter alpha
+ - "β": [t: "~b"]                            # 0x3b2 greek small letter beta
+ - "γ": [t: "~g"]                            # 0x3b3 greek small letter gamma
+ - "δ": [t: "~d"]                            # 0x3b4 greek small letter delta
+ - "ε": [t: "~e"]                            # 0x3b5 greek small letter epsilon
+ - "ζ": [t: "~z"]                            # 0x3b6 greek small letter zeta
+ - "η": [t: "~û"]                            # 0x3b7 greek small letter eta
+ - "θ": [t: "~ô"]                            # 0x3b8 greek small letter theta
+ - "ι": [t: "~i"]                            # 0x3b9 greek small letter iota
+ - "κ": [t: "~k"]                            # 0x3ba greek small letter kappa
+ - "λ": [t: "~l"]                            # 0x3bb greek small letter lamda
+ - "μ": [t: "~m"]                            # 0x3bc greek small letter mu
+ - "ν": [t: "~n"]                            # 0x3bd greek small letter nu
+ - "ξ": [t: "~x"]                            # 0x3be greek small letter xi
+ - "ο": [t: "~o"]                            # 0x3bf greek small letter omicron
+ - "π": [t: "~p"]                            # 0x3c0 greek small letter pi
+ - "ρ": [t: "~r"]                            # 0x3c1 greek small letter rho
+ - "σ": [t: "~s"]                            # 0x3c3 greek small letter sigma
+ - "τ": [t: "~t"]                            # 0x3c4 greek small letter tau
+ - "υ": [t: "~u"]                            # 0x3c5 greek small letter upsilon
+ - "φ": [t: "~f"]                            # 0x3c6 greek small letter phi
+ - "χ": [t: "~ç"]                            # 0x3c7 greek small letter chi
+ - "ψ": [t: "~y"]                            # 0x3c8 greek small letter psi
+ - "ω": [t: "~w"]                            # 0x3c9 greek small letter omega
+
+# Dedicon symbols: logic (logica); prefix words get a removable space after them (not "nt", see below)
+# Spaces inside a replacement must be written as 𝐰: MathCAT removes plain spaces from braille output
+ - "∧": [t: "en"]                            # 0x2227 logical and
+ - "∨": [t: "of"]                            # 0x2228 logical or
+# NOTE: the not sign is written without a space for now ("ntP"); this still needs discussion,
+#   the Dedicon examples show "¬P" and the symbol table "nt" (see tests/braille/Dedicon/website.rs, module logica)
+ - "¬": [t: "nt"]                            # 0xac not sign
+ - "⊻": [t: "xof"]                           # 0x22bb xor
+ - "↔": [t: ",:,"]                           # 0x2194 left right arrow
+ - "∀": [t: "voor𝐰alle𝐖"]                    # 0x2200 for all
+ - "∃": [t: "er𝐰is𝐰een𝐖"]                    # 0x2203 there exists
+
+# Dedicon symbols: geometry (meetkunde); prefix words get a removable space after them
+ - "∠": [t: "hoek𝐖"]                         # 0x2220 angle
+ - "∡": [t: "hoek𝐖"]                         # 0x2221 measured angle
+ - "∟": [t: "rHoek𝐖"]                        # 0x221f right angle
+ - "∆": [t: "drieh𝐖"]                        # 0x2206 increment
+ - "∥": [t: "//"]                            # 0x2225 parallel to
+ - "⊥": [t: "loodr"]                         # 0x22a5 up tack
+
+# Dedicon symbols: arrows (pijlen); the website shows en dashes, output uses ASCII hyphens
+ - "←": [t: "<--"]                           # 0x2190 leftwards arrow
+ - "↑": [t: "vanOnder-->"]                   # 0x2191 upwards arrow
+ - "→": [t: "-->"]                           # 0x2192 rightwards arrow
+ - "↓": [t: "vanBoven<--"]                   # 0x2193 downwards arrow
+ - "⇒": [t: "=>"]                            # 0x21d2 rightwards double arrow
+ - "⇔": [t: "<=>"]                           # 0x21d4 left right double arrow
+
+# Dedicon symbols: sets (verzamelingen)
+ - "∅": [t: "{}"]                            # 0x2205 empty set
+ - "∈": [t: "element"]                       # 0x2208 element of
+ - "∉": [t: "geenElement"]                   # 0x2209 not an element of
+ - "∩": [t: "doorsnede"]                     # 0x2229 intersection
+ - "∪": [t: "verenigd"]                      # 0x222a union
+ - "⊂": [t: "deelverz"]                      # 0x2282 subset of
+ - "⊄": [t: "geenDeelverz"]                  # 0x2284 not a subset of
+ - "⊆": [t: "deelverzOf="]                   # 0x2286 subset of or equal to
+ - "⊈": [t: "geenDeelverzOf="]               # 0x2288 neither a subset of nor equal to
+ - "⊃": [t: "omvat"]                         # 0x2283 superset of
+ - "⊅": [t: "nietOmvat"]                     # 0x2285 not a superset of
+ - "⊇": [t: "omvatOf="]                      # 0x2287 superset of or equal to
+ - "⊉": [t: "nietOmvatOf="]                  # 0x2289 neither a superset of nor equal to
+ - "ℕ": [t: "N"]                             # 0x2115 double-struck capital n
+ - "ℤ": [t: "Z"]                             # 0x2124 double-struck capital z
+ - "ℚ": [t: "Q"]                             # 0x211a double-struck capital q
+ - "ℝ": [t: "R"]                             # 0x211d double-struck capital r
+ - "ℂ": [t: "C"]                             # 0x2102 double-struck capital c
+
+# norm bars: MathCAT turns <mfenced open="||" close="||"> into U+2016; Dedicon writes two vertical lines: "||{->v||"
+ - "‖": [t: "||"]                            # 0x2016 double vertical line
+
+# ellipses (not in the Dedicon symbol list): written as three dots in all directions, e.g. in matrices
+#   "[a_11:...:a_1n; ...:...:...; a_m1:...:a_mn]"; chosen over the non-ASCII "…" used on the website
+ - "…": [t: "..."]                           # 0x2026 horizontal ellipsis
+ - "⋯": [t: "..."]                           # 0x22ef midline horizontal ellipsis
+ - "⋮": [t: "..."]                           # 0x22ee vertical ellipsis
+ - "⋱": [t: "..."]                           # 0x22f1 down right diagonal ellipsis
+ - "⋰": [t: "..."]                           # 0x22f0 up right diagonal ellipsis
+
+# keyboard (ASCII) characters are taken over as they are, as Dedicon prescribes
+ - "!": [t: "!"]                             # 0x21 exclamation mark
+ - "\"": [t: "\""]                           # 0x22 quotation mark
+ - "#": [t: "#"]                             # 0x23 number sign
+ - "$": [t: "$"]                             # 0x24 dollar sign
+ - "%": [t: "%"]                             # 0x25 percent sign
+ - "&": [t: "&"]                             # 0x26 ampersand
+ - "'": [t: "'"]                             # 0x27 apostrophe
+ - "(": [t: "("]                             # 0x28 left parenthesis
+ - ")": [t: ")"]                             # 0x29 right parenthesis
+ - ",": [t: ","]                             # 0x2c comma
+ - ".": [t: "."]                             # 0x2e full stop
+ - ";": [t: ";"]                             # 0x3b semicolon
+ - "<": [t: "<"]                             # 0x3c less-than sign
+ - "=": [t: "="]                             # 0x3d equals sign
+ - ">": [t: ">"]                             # 0x3e greater-than sign
+ - "?": [t: "?"]                             # 0x3f question mark
+ - "@": [t: "@"]                             # 0x40 commercial at
+ - "[": [t: "["]                             # 0x5b left square bracket
+ - "\\": [t: "\\"]                           # 0x5c reverse solidus
+ - "]": [t: "]"]                             # 0x5d right square bracket
+ - "^": [t: "^"]                             # 0x5e circumflex accent
+ - "_": [t: "_"]                             # 0x5f low line
+ - "`": [t: "`"]                             # 0x60 grave accent
+ - "{": [t: "{"]                             # 0x7b left curly bracket
+ - "|": [t: "|"]                             # 0x7c vertical line
+ - "}": [t: "}"]                             # 0x7d right curly bracket
+ - "~": [t: "~"]                             # 0x7e tilde

@@ -48,5 +48,10 @@ mod braille {
         mod chemistry;
         mod other;
     }
+
+    mod Dedicon {
+        mod website;
+        mod misc;
+    }
 }
 
