@@ -87,6 +87,12 @@
  - "÷": [t: "/"]                         # 0xf7
  - "∕": [t: "/"]                         # 0x2215 division slash
 
+# circled operators: "[\"" followed by the operator; spaces around them come from AddSpacing (definitions.yaml)
+# NOTE: the circled operators need discussion; circled minus is written by analogy with circled plus and times
+ - "⊕": [t: "[\"+"]                      # 0x2295 circled plus
+ - "⊖": [t: "[\"-"]                      # 0x2296 circled minus
+ - "⊗": [t: "[\"*"]                      # 0x2297 circled times
+
 # the colon stays a colon, also as division or ratio sign
  - ":": [t: ":"]                         # 0x3a
  - "∶": [t: ":"]                         # 0x2236 ratio
@@ -123,15 +129,22 @@
 
 # Dedicon symbols: general (algemene symbolen)
 # Temperatures get a space before the degree sign: "-14 grC" (as an angle after a number: "30 gr", see Dedicon_Rules.yaml)
- - "‰": [t: "%%"]                            # 0x2030 per mille sign
+ - "‰": [t: "𝐰%%𝐰"]                          # 0x2030 per mille sign, with a space before and after: "5 %%"
  - "°": [t: "gr"]                            # 0xb0 degree sign
  - "℃": [t: "𝐰grC"]                         # 0x2103 degree celsius (MathCAT merges ° C into it)
  - "℉": [t: "𝐰grF"]                         # 0x2109 degree fahrenheit (MathCAT merges ° F into it)
  - "±": [t: "+-"]                            # 0xb1 plus-minus sign
+ - "∓": [t: "-+"]                            # 0x2213 minus-or-plus sign
  - "≤": [t: "<="]                            # 0x2264 less-than or equal to
  - "≥": [t: ">="]                            # 0x2265 greater-than or equal to
+ - "≮": [t: "niet<"]                         # 0x226e not less-than
+ - "≯": [t: "niet>"]                         # 0x226f not greater-than
  - "≠": [t: "=niet"]                         # 0x2260 not equal to
  - "≈": [t: "=ong"]                          # 0x2248 almost equal to
+ - "≉": [t: "=nietOng"]                      # 0x2249 not almost equal to
+ - "≡": [t: "=="]                            # 0x2261 identical to (no spaces around it in the Dedicon list)
+ - "∣": [t: "|"]                             # 0x2223 divides, written as a vertical line (no spaces around it in the Dedicon list)
+# NOTE: "estimates" needs discussion: an older Dedicon symbol list writes "~", the current conversion "=^"
  - "≙": [t: "=^"]                            # 0x2259 estimates
  - "∑": [t: "~S"]                            # 0x2211 n-ary summation
  - "∏": [t: "~P"]                            # 0x220f n-ary product
@@ -150,7 +163,9 @@
  - "′": [t: "'"]                             # 0x2032 prime
  - "″": [t: "\""]                            # 0x2033 double prime
  - "∞": [t: "inf"]                           # 0x221e infinity
- - "∫": [t: "Intg"]                          # 0x222b integral
+ - "∫": [t: "𝐖Intg"]                         # 0x222b integral, with a space before it: "2 Intg{a..b}..."
+ - "∬": [t: "𝐖IntgIntg"]                     # 0x222c double integral
+ - "∮": [t: "𝐖kringIntg"]                    # 0x222e contour integral
 
 # Dedicon symbols: Greek letters: "~" followed by a Latin letter
 # NOTE: eta, theta and chi deliberately use NON-ASCII letters, exactly as in the Dedicon table:
@@ -218,8 +233,8 @@
  - "¬": [t: "nt"]                            # 0xac not sign
  - "⊻": [t: "xof"]                           # 0x22bb xor
  - "↔": [t: ",:,"]                           # 0x2194 left right arrow
- - "∀": [t: "voor𝐰alle𝐖"]                    # 0x2200 for all
- - "∃": [t: "er𝐰is𝐰een𝐖"]                    # 0x2203 there exists
+ - "∀": [t: "𝐖voor𝐰alle𝐖"]                   # 0x2200 for all
+ - "∃": [t: "𝐖er𝐰is𝐰een𝐖"]                   # 0x2203 there exists
 
 # Dedicon symbols: geometry (meetkunde); prefix words get a removable space after them
  - "∠": [t: "hoek𝐖"]                         # 0x2220 angle
@@ -228,6 +243,7 @@
  - "∆": [t: "drieh𝐖"]                        # 0x2206 increment
  - "∥": [t: "//"]                            # 0x2225 parallel to
  - "⊥": [t: "loodr"]                         # 0x22a5 up tack
+ - "≅": [t: "=congr"]                        # 0x2245 approximately equal to (congruent)
 
 # Dedicon symbols: arrows (pijlen); the website shows en dashes, output uses ASCII hyphens
  - "←": [t: "<--"]                           # 0x2190 leftwards arrow
@@ -244,11 +260,12 @@
  - "⟸": [t: ",="]                            # 0x27f8 long leftwards double arrow, written as the leftwards double arrow
 
 # Dedicon symbols: sets (verzamelingen)
- - "∅": [t: "{}"]                            # 0x2205 empty set
+ - "∅": [t: "𝐰{}𝐰"]                          # 0x2205 empty set, with a space before and after
  - "∈": [t: "element"]                       # 0x2208 element of
  - "∉": [t: "geenElement"]                   # 0x2209 not an element of
  - "∩": [t: "doorsnede"]                     # 0x2229 intersection
  - "∪": [t: "verenigd"]                      # 0x222a union
+ - "⋃": [t: "verenigd"]                      # 0x22c3 n-ary union
  - "⊂": [t: "deelverz"]                      # 0x2282 subset of
  - "⊄": [t: "geenDeelverz"]                  # 0x2284 not a subset of
  - "⊆": [t: "deelverzOf="]                   # 0x2286 subset of or equal to

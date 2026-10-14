@@ -3,6 +3,21 @@
 // per topic). Choices that are not covered by those pages are marked with NOTE.
 // Rules: Rules/Braille/Dedicon/
 
+// Dedicon examples: omcirkelde operatoren
+// NOTE: the circled operators need discussion (see unicode.yaml).
+mod omcirkelde_operatoren {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Plusteken, minteken en vermenigvuldigingsteken in een cirkel, met spaties.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mi>a</mi><mo>⊕</mo><mi>b</mi><mo>⊖</mo><mi>c</mi><mo>⊗</mo><mi>d</mi></math>"#;
+        test_braille("Dedicon", expr, r#"a ["+ b ["- c ["* d"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: pijlen
 mod pijlen {
     use crate::common::*;
