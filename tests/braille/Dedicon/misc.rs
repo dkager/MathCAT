@@ -3,6 +3,21 @@
 // per topic). Choices that are not covered by those pages are marked with NOTE.
 // Rules: Rules/Braille/Dedicon/
 
+// Dedicon examples: griekse letters
+// NOTE: the Greek letters still need to be checked with Dedicon (see unicode.yaml).
+mod griekse_letters {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Sigma aan het eind van een woord (final sigma), geschreven als sigma.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mi>ς</mi><mo>+</mo><mi>σ</mi></math>"#;
+        test_braille("Dedicon", expr, r#"~s + ~s"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: accenten
 // A hat over an expression is written as "{^" before it, like the overbar "{-" and the vector arrow "{->"
 // (Dedicon symbol list: "{^" dakje midden boven).

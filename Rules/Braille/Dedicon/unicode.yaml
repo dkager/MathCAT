@@ -150,6 +150,9 @@
 # NOTE: eta, theta and chi deliberately use NON-ASCII letters, exactly as in the Dedicon table:
 #   eta ~û / ~Û, theta ~ô / ~Ô, chi ~ç / ~Ç
 #   This is an intended exception to ASCII-only output, following the Dedicon symbol table; do not 'fix' these to ASCII.
+# NOTE: the Greek letters still need to be checked with Dedicon. Other Dedicon sources differ from the symbol table
+#   on the website for eta, pi, upsilon, chi, psi and omega (e.g. pi as "pi" instead of "~p", as in one of the website
+#   examples, and chi and psi swapped), so these mappings may change.
  - "Α": [t: "~A"]                            # 0x391 greek capital letter alpha
  - "Β": [t: "~B"]                            # 0x392 greek capital letter beta
  - "Γ": [t: "~G"]                            # 0x393 greek capital letter gamma
@@ -191,6 +194,7 @@
  - "ο": [t: "~o"]                            # 0x3bf greek small letter omicron
  - "π": [t: "~p"]                            # 0x3c0 greek small letter pi
  - "ρ": [t: "~r"]                            # 0x3c1 greek small letter rho
+ - "ς": [t: "~s"]                            # 0x3c2 greek small letter final sigma (written like sigma)
  - "σ": [t: "~s"]                            # 0x3c3 greek small letter sigma
  - "τ": [t: "~t"]                            # 0x3c4 greek small letter tau
  - "υ": [t: "~u"]                            # 0x3c5 greek small letter upsilon
