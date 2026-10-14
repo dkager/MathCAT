@@ -3,6 +3,53 @@
 // per topic). Choices that are not covered by those pages are marked with NOTE.
 // Rules: Rules/Braille/Dedicon/
 
+// Dedicon examples: pijlen
+mod pijlen {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Pijl naar boven en beneden, met spaties.
+    /// NOTE: ",ô'" contains a non-ASCII letter; this needs discussion (see unicode.yaml).
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mi>a</mi><mo>↕</mo><mi>b</mi></math>"#;
+        test_braille("Dedicon", expr, r#"a ,ô' b"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Pijl naar rechts boven een pijl naar links (evenwicht), zonder spaties.
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><mi>A</mi><mo>⇄</mo><mi>B</mi></math>"#;
+        test_braille("Dedicon", expr, r#"A'=,B"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Pijl naar links boven een pijl naar rechts, zonder spaties.
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><mi>A</mi><mo>⇆</mo><mi>B</mi></math>"#;
+        test_braille("Dedicon", expr, r#"A,='B"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Pijl naar links met dubbele stok, met spaties.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mi>P</mi><mo>⇐</mo><mi>Q</mi></math>"#;
+        test_braille("Dedicon", expr, r#"P ,= Q"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 5: Lange pijl naar links met dubbele stok, geschreven als de gewone.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><mi>P</mi><mo>⟸</mo><mi>Q</mi></math>"#;
+        test_braille("Dedicon", expr, r#"P ,= Q"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: valuta
 mod valuta {
     use crate::common::*;

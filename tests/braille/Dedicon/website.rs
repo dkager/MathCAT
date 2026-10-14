@@ -276,11 +276,12 @@ mod limieten {
     }
 
     /// Voorbeeld 3: Rechter- of bovenlimiet met een breuk.
-    /// NOTE: the arrow is written "vanBoven<--" as in the rules text and symbol table (the example points the other way).
+    /// NOTE: the arrow is written "vanBoven-->" as in this example; the rules text and symbol table on the website
+    /// write "vanBoven<--".
     #[test]
     fn voorbeeld_03() -> Result<()> {
         let expr = r#"<math><munder><mo>lim</mo> <mrow><mi>x</mi> <mo>↓</mo> <mn>0</mn> </mrow></munder><mo>&#x2061;</mo> <mfrac><mn>1</mn> <mi>x</mi> </mfrac><mo>=</mo> <mi>∞</mi></math>"#;
-        test_braille("Dedicon", expr, r#"lim{x vanBoven<-- 0}1/x = inf"#)?;
+        test_braille("Dedicon", expr, r#"lim{x vanBoven--> 0}1/x = inf"#)?;
         return Ok(());
     }
 
@@ -296,14 +297,15 @@ mod limieten {
 
     /// Voorbeeld 5: Een breuk met limiet in de teller.
     /// NOTE: the website writes the limit with spaces around "/" (lim{...}1 / x) and mentions brackets as the alternative.
-    /// The arrow is written "vanBoven<--" as in the rules text and symbol table (the example points the other way).
+    /// The arrow is written "vanBoven-->" as in the examples; the rules text and symbol table on the website
+    /// write "vanBoven<--".
     /// Chosen: keep the fraction rule, which only puts parentheses around the part that needs them
     /// (e.g. "(-5 + 3)/11", "21/(3sqrt(2))"),
-    /// so the expected output is (lim{x vanBoven<-- 0}1)/x, not (lim{x vanBoven<-- 0}1)/(x).
+    /// so the expected output is (lim{x vanBoven--> 0}1)/x, not (lim{x vanBoven--> 0}1)/(x).
     #[test]
     fn voorbeeld_05() -> Result<()> {
         let expr = r#"<math><mfrac><mrow><munder><mo>lim</mo> <mrow><mi>x</mi> <mo>↓</mo> <mn>0</mn> </mrow></munder><mn>1</mn> </mrow><mi>x</mi></mfrac></math>"#;
-        test_braille("Dedicon", expr, r#"(lim{x vanBoven<-- 0}1)/x"#)?;
+        test_braille("Dedicon", expr, r#"(lim{x vanBoven--> 0}1)/x"#)?;
         return Ok(());
     }
 }
