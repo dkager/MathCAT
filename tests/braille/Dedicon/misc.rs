@@ -3,6 +3,70 @@
 // per topic). Choices that are not covered by those pages are marked with NOTE.
 // Rules: Rules/Braille/Dedicon/
 
+// Dedicon examples: onder en boven
+// Constructs under or over an expression that are not accents or large operators (default munder/mover rule).
+// NOTE: Dedicon still has to decide on a notation for these; the expected output is provisional.
+mod onder_en_boven {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Accolade onder een som: de som krijgt haakjes.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><munder><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>⏟</mo></munder></math>"#;
+        test_braille("Dedicon", expr, r#"(a + b)_accoladeOnder"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Accolade boven een som, met een tekst erboven.
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><mover><mover><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>⏞</mo></mover><mtext>som</mtext></mover></math>"#;
+        test_braille("Dedicon", expr, r#"(a + b)^accoladeBoven^som"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Streep onder een variabele.
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><munder><mi>x</mi><mo>_</mo></munder></math>"#;
+        test_braille("Dedicon", expr, r#"x_-"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Tilde boven een variabele.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mover><mi>x</mi><mo>~</mo></mover><mo>+</mo><mn>1</mn></math>"#;
+        test_braille("Dedicon", expr, r#"x^~ + 1"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 5: Iets onder en boven een variabele.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><munderover><mi>A</mi><mn>1</mn><mn>2</mn></munderover></math>"#;
+        test_braille("Dedicon", expr, r#"A_1 ^2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 6: Tekst boven een isgelijkteken (is per definitie gelijk aan).
+    #[test]
+    fn voorbeeld_06() -> Result<()> {
+        let expr = r#"<math><mi>a</mi><mover><mo>=</mo><mtext>def</mtext></mover><mi>b</mi></math>"#;
+        test_braille("Dedicon", expr, r#"a = ^def b"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 7: Label boven een pijl.
+    #[test]
+    fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><mi>A</mi><mover><mo>→</mo><mi>f</mi></mover><mi>B</mi></math>"#;
+        test_braille("Dedicon", expr, r#"A-->^f B"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: samengestelde constructies
 // Parentheses and spaces in combinations of fractions, scripts, function names, accents and text.
 mod samengestelde_constructies {
@@ -268,6 +332,21 @@ mod valuta {
     }
 }
 
+// Dedicon examples: letters in andere stijlen
+// Bold, script and other styles are written as the plain letter; Greek letters get "~" (see unicode-full.yaml).
+mod letters_in_andere_stijlen {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Vette, schrijf- en vette Griekse letter (mathvariant).
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mi mathvariant="bold">v</mi><mo>+</mo><mi mathvariant="script">L</mi><mo>+</mo><mi mathvariant="bold">α</mi></math>"#;
+        test_braille("Dedicon", expr, r#"v + L + ~a"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: griekse letters
 // NOTE: the Greek letters still need to be checked with Dedicon (see unicode.yaml).
 mod griekse_letters {
@@ -284,7 +363,7 @@ mod griekse_letters {
 }
 
 // Dedicon examples: accenten
-// A hat over an expression is written as "{^" before it, like the overbar "{-" and the vector arrow "{->"
+// A hat over an expression is written as "{^" before it, like the overbar "{-" and the vector arrow "{-->"
 // (Dedicon symbol list: "{^" dakje midden boven).
 mod accenten {
     use crate::common::*;
@@ -483,6 +562,7 @@ mod witruimte {
 // A space (no-break space or thin mspace) between groups of digits is a thousands separator and becomes a point,
 // if the grouping is valid: a first group of 1 to 3 digits, then only groups of exactly 3 digits.
 // Otherwise the space stays, as it does after the decimal comma.
+// Each example is also tested as a negative number: the minus sign and the number in one mrow.
 mod getallen_met_spaties {
     use crate::common::*;
     use anyhow::Result;
@@ -492,6 +572,8 @@ mod getallen_met_spaties {
     fn voorbeeld_01() -> Result<()> {
         let expr = r#"<math><mn>1&#xA0;000</mn></math>"#;
         test_braille("Dedicon", expr, r#"1.000"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>1&#xA0;000</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-1.000"#)?;
         return Ok(());
     }
 
@@ -500,6 +582,8 @@ mod getallen_met_spaties {
     fn voorbeeld_02() -> Result<()> {
         let expr = r#"<math><mn>1</mn><mspace width="0.167em"/><mn>000</mn></math>"#;
         test_braille("Dedicon", expr, r#"1.000"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>1</mn><mspace width="0.167em"/><mn>000</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-1.000"#)?;
         return Ok(());
     }
 
@@ -508,6 +592,8 @@ mod getallen_met_spaties {
     fn voorbeeld_03() -> Result<()> {
         let expr = r#"<math><mn>50&#xA0;000&#xA0;000</mn></math>"#;
         test_braille("Dedicon", expr, r#"50.000.000"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>50&#xA0;000&#xA0;000</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-50.000.000"#)?;
         return Ok(());
     }
 
@@ -516,6 +602,8 @@ mod getallen_met_spaties {
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><mn>1&#xA0;000,5</mn></math>"#;
         test_braille("Dedicon", expr, r#"1.000,5"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>1&#xA0;000,5</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-1.000,5"#)?;
         return Ok(());
     }
 
@@ -524,6 +612,8 @@ mod getallen_met_spaties {
     fn voorbeeld_05() -> Result<()> {
         let expr = r#"<math><mn>1&#xA0;00</mn></math>"#;
         test_braille("Dedicon", expr, r#"1 00"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>1&#xA0;00</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-1 00"#)?;
         return Ok(());
     }
 
@@ -532,6 +622,8 @@ mod getallen_met_spaties {
     fn voorbeeld_06() -> Result<()> {
         let expr = r#"<math><mn>50&#xA0;00&#xA0;000</mn></math>"#;
         test_braille("Dedicon", expr, r#"50 00 000"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>50&#xA0;00&#xA0;000</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-50 00 000"#)?;
         return Ok(());
     }
 
@@ -540,6 +632,8 @@ mod getallen_met_spaties {
     fn voorbeeld_07() -> Result<()> {
         let expr = r#"<math><mn>1234&#xA0;567</mn></math>"#;
         test_braille("Dedicon", expr, r#"1234 567"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>1234&#xA0;567</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-1234 567"#)?;
         return Ok(());
     }
 
@@ -548,6 +642,8 @@ mod getallen_met_spaties {
     fn voorbeeld_08() -> Result<()> {
         let expr = r#"<math><mn>0,123&#xA0;456</mn></math>"#;
         test_braille("Dedicon", expr, r#"0,123 456"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>0,123&#xA0;456</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-0,123 456"#)?;
         return Ok(());
     }
 }

@@ -104,6 +104,10 @@
  - "⁣": [t: ""]                          # 0x2063
  - "⁤": [t: ""]                          # 0x2064
 
+# soft hyphen: only marks where a word may be broken off, so it is left out
+# NOTE: an older Dedicon symbol list writes the soft hyphen as "-"; it is left out here on purpose, because it is invisible
+ - "\u00AD": [t: ""]                     # 0xad soft hyphen
+
 # vulgar fractions (all Unicode characters named VULGAR FRACTION): written as a linear fraction, like the mfrac rule
 # The removable spaces (𝐖) keep "2½" from becoming "21/2" (twenty-one halves): it becomes "2 1/2";
 # cleanup removes them again where they are not needed, e.g. after an opening bracket: "(½)" -> "(1/2)"
@@ -257,7 +261,13 @@
  - "⇐": [t: ",="]                            # 0x21d0 leftwards double arrow (not "<=", that is "less than or equal to")
  - "⇒": [t: "=>"]                            # 0x21d2 rightwards double arrow
  - "⇔": [t: "<=>"]                           # 0x21d4 left right double arrow
- - "⟸": [t: ",="]                            # 0x27f8 long leftwards double arrow, written as the leftwards double arrow
+# long arrows are written as the short ones
+ - "⟵": [t: "<--"]                           # 0x27f5 long leftwards arrow
+ - "⟶": [t: "-->"]                           # 0x27f6 long rightwards arrow
+ - "⟷": [t: ",:,"]                           # 0x27f7 long left right arrow
+ - "⟸": [t: ",="]                            # 0x27f8 long leftwards double arrow
+ - "⟹": [t: "=>"]                            # 0x27f9 long rightwards double arrow
+ - "⟺": [t: "<=>"]                           # 0x27fa long left right double arrow
 
 # Dedicon symbols: sets (verzamelingen)
  - "∅": [t: "𝐰{}𝐰"]                          # 0x2205 empty set, with a space before and after
@@ -280,7 +290,7 @@
  - "ℝ": [t: "R"]                             # 0x211d double-struck capital r
  - "ℂ": [t: "C"]                             # 0x2102 double-struck capital c
 
-# norm bars: MathCAT turns <mfenced open="||" close="||"> into U+2016; Dedicon writes two vertical lines: "||{->v||"
+# norm bars: MathCAT turns <mfenced open="||" close="||"> into U+2016; Dedicon writes two vertical lines: "||{-->v||"
  - "‖": [t: "||"]                            # 0x2016 double vertical line
 
 # ellipses (not in the Dedicon symbol list): written as three dots in all directions, e.g. in matrices
@@ -290,6 +300,13 @@
  - "⋮": [t: "..."]                           # 0x22ee vertical ellipsis
  - "⋱": [t: "..."]                           # 0x22f1 down right diagonal ellipsis
  - "⋰": [t: "..."]                           # 0x22f0 up right diagonal ellipsis
+
+# marks under or over an expression that are not accents (see the default munder/mover rule in Dedicon_Rules.yaml):
+#   "(a + b)_accoladeOnder", "x_-"
+# NOTE: Dedicon still has to decide on a notation for these; the names below are provisional
+ - "⏞": [t: "accoladeBoven"]                 # 0x23de top curly bracket (overbrace)
+ - "⏟": [t: "accoladeOnder"]                 # 0x23df bottom curly bracket (underbrace)
+ - "¯": [t: "-"]                             # 0xaf macron (a line under or over an expression; over it, it is an accent: "{-")
 
 # keyboard (ASCII) characters are taken over as they are, as Dedicon prescribes
  - "!": [t: "!"]                             # 0x21 exclamation mark

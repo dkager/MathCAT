@@ -345,9 +345,9 @@
       then: [t: "𝐰"]
 
 # Dedicon rule for marks over an expression: "{" mark expression, without a closing brace:
-#   overbar (complex conjugate) "{-z", "{-2i"; vector arrow "{->a", "{->OA"; hat "{^x"
+#   overbar (complex conjugate) "{-z", "{-2i"; vector arrow "{-->a", "{-->OA"; hat "{^x"
 # If the expression would contain spaces, it gets parentheses to show what is under the mark:
-#   "{-(a + bi)", "{->(F_1 + F_2)", "{^(a + b)"
+#   "{-(a + bi)", "{-->(F_1 + F_2)", "{^(a + b)"
 # Based on the accents rule in ../ASCIIMath/ASCIIMath_Rules.yaml (Accents is in definitions.yaml)
 -
   name: accents
@@ -459,13 +459,19 @@
   - t: "}"
 
 # Fallback for other under/over constructs, for which Dedicon has no notation: written like sub- and superscripts
-#   (under "_", over "^"), with parentheses around compound parts
+#   (under "_", over "^"), with parentheses around compound parts, also around a compound base (as for msub/msup):
+#   "(a + b)_accoladeOnder", "x_-" (line under x), "x^~"
+# NOTE: Dedicon still has to decide on a notation for these constructs (under- and overbraces, a line under an
+#   expression, text over an operator as in "= ^def", a label over an arrow as in "A-->^f B"); this output is provisional.
 -
   name: default
   tag: [munder, mover, munderover]
   match: "."
   replace:
-  - x: "*[1]"
+  - test:
+      if: "*[1][self::m:msup or self::m:msubsup or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')))]"
+      then: [t: "(", x: "*[1]", t: ")"]
+      else: [x: "*[1]"]
   - test:
       if: "self::m:mover"
       then: [t: "^"]

@@ -723,6 +723,7 @@ mod som_en_product {
 
 // Dedicon examples: vectoren
 // Source: https://www.dedicon.nl/artikel/scholen/regels-en-voorbeelden-vectoren/
+// NOTE: the website writes the vector arrow as "{->"; the correct notation is "{-->", like the arrow "-->".
 mod vectoren {
     use crate::common::*;
     use anyhow::Result;
@@ -731,7 +732,7 @@ mod vectoren {
     #[test]
     fn voorbeeld_01() -> Result<()> {
         let expr = r#"<math><mover><mi>a</mi> <mo>→</mo> </mover><mo>=</mo> <mover><mi>OA</mi> <mo>→</mo></mover></math>"#;
-        test_braille("Dedicon", expr, r#"{->a = {->OA"#)?;
+        test_braille("Dedicon", expr, r#"{-->a = {-->OA"#)?;
         return Ok(());
     }
 
@@ -739,7 +740,7 @@ mod vectoren {
     #[test]
     fn voorbeeld_02() -> Result<()> {
         let expr = r#"<math><mover><mi>t</mi> <mo>→</mo> </mover><mo>=</mo> <mrow><mover><mi>v</mi> <mo>→</mo> </mover><mo>+</mo> <mover><mi>w</mi> <mo>→</mo></mover></mrow></math>"#;
-        test_braille("Dedicon", expr, r#"{->t = {->v + {->w"#)?;
+        test_braille("Dedicon", expr, r#"{-->t = {-->v + {-->w"#)?;
         return Ok(());
     }
 
@@ -747,7 +748,7 @@ mod vectoren {
     #[test]
     fn voorbeeld_03() -> Result<()> {
         let expr = r#"<math><mover><mrow><msub><mi>F</mi> <mn>1</mn> </msub><mo>+</mo> <msub><mi>F</mi> <mn>2</mn> </msub></mrow><mo>→</mo></mover></math>"#;
-        test_braille("Dedicon", expr, r#"{->(F_1 + F_2)"#)?;
+        test_braille("Dedicon", expr, r#"{-->(F_1 + F_2)"#)?;
         return Ok(());
     }
 
@@ -755,7 +756,7 @@ mod vectoren {
     #[test]
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><mfenced open="||" close="||" separators=""><mover><mi>v</mi> <mo>→</mo></mover></mfenced></math>"#;
-        test_braille("Dedicon", expr, r#"||{->v||"#)?;
+        test_braille("Dedicon", expr, r#"||{-->v||"#)?;
         return Ok(());
     }
 }
