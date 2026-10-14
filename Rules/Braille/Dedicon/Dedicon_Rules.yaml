@@ -332,9 +332,9 @@
       then: [t: "𝐰"]
 
 # Dedicon rule for marks over an expression: "{" mark expression, without a closing brace:
-#   overbar (complex conjugate) "{-z", "{-2i"; vector arrow "{->a", "{->OA"
+#   overbar (complex conjugate) "{-z", "{-2i"; vector arrow "{->a", "{->OA"; hat "{^x"
 # If the expression would contain spaces, it gets parentheses to show what is under the mark:
-#   "{-(a + bi)", "{->(F_1 + F_2)"
+#   "{-(a + bi)", "{->(F_1 + F_2)", "{^(a + b)"
 # Based on the accents rule in ../ASCIIMath/ASCIIMath_Rules.yaml (Accents is in definitions.yaml)
 -
   name: accents

@@ -58,11 +58,13 @@
   }
 
 # Marks over an expression and their Dedicon text (see the accents rule in Dedicon_Rules.yaml):
-#   overbar (complex conjugate) "{-z", vector arrow "{->a"; there is no closing brace
-# Based on Accents in ../ASCIIMath/definitions.yaml; Dedicon defines only these two
+#   overbar (complex conjugate) "{-z", vector arrow "{->a", hat "{^x"; there is no closing brace
+# Based on Accents in ../ASCIIMath/definitions.yaml; Dedicon defines only these three
+#   (the Dedicon symbol list: "{-" streep midden boven, "{→" vectorpijl, "{^" dakje midden boven)
 - Accents: {
     "¯": "-", "‾": "-", "–": "-", "−": "-", "-": "-", "_": "-",
     "→": "->", "⃗": "->",
+    "^": "^", "ˆ": "^", "̂": "^",    # circumflex accent, modifier letter circumflex, combining circumflex
   }
 
 # Brackets: no space directly after an opening or before a closing bracket (see the mfrac rule in Dedicon_Rules.yaml)

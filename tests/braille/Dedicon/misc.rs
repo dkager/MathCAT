@@ -3,6 +3,46 @@
 // per topic). Choices that are not covered by those pages are marked with NOTE.
 // Rules: Rules/Braille/Dedicon/
 
+// Dedicon examples: accenten
+// A hat over an expression is written as "{^" before it, like the overbar "{-" and the vector arrow "{->"
+// (Dedicon symbol list: "{^" dakje midden boven).
+mod accenten {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Dakje boven een variabele (circumflex accent ^).
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mover accent="true"><mi>x</mi><mo>^</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"{^x"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Dakje boven een variabele (modifier letter circumflex ˆ).
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><mover accent="true"><mi>x</mi><mo>ˆ</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"{^x"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Dakje boven een variabele (combining circumflex U+0302).
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><mover accent="true"><mi>x</mi><mo>&#x302;</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"{^x"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Dakje boven een som.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mover accent="true"><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>^</mo></mover><mo>=</mo><mn>1</mn></math>"#;
+        test_braille("Dedicon", expr, r#"{^(a + b) = 1"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: onbekende elementen
 // Elements without a Dedicon rule fall back on the default rules: the content is written as it is, without extra text.
 mod onbekende_elementen {
