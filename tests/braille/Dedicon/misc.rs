@@ -3,6 +3,171 @@
 // per topic). Choices that are not covered by those pages are marked with NOTE.
 // Rules: Rules/Braille/Dedicon/
 
+// Dedicon examples: samengestelde constructies
+// Parentheses and spaces in combinations of fractions, scripts, function names, accents and text.
+mod samengestelde_constructies {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Macht van een breuk: de breuk als grondtal krijgt haakjes.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><msup><mfrac><mn>1</mn><mn>2</mn></mfrac><mn>2</mn></msup></math>"#;
+        test_braille("Dedicon", expr, r#"(1/2)^2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Macht van een onderindex: een spatie sluit de onderindex af voor de "^".
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><msup><msub><mi>x</mi><mi>n</mi></msub><mn>2</mn></msup></math>"#;
+        test_braille("Dedicon", expr, r#"x_n ^2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Deelstreep als losse operator tussen twee onderindexen: spaties om de "/".
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><msub><mi>u</mi><mi>n</mi></msub><mo>/</mo><msub><mi>v</mi><mi>n</mi></msub></math>"#;
+        test_braille("Dedicon", expr, r#"u_n / v_n"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Breuk met een minteken (U+2212) in de teller: geen haakjes.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mfrac><mrow><mo>−</mo><mn>5</mn></mrow><mn>11</mn></mfrac></math>"#;
+        test_braille("Dedicon", expr, r#"-5/11"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 5: Breuk met een negatieve variabele in de teller: geen haakjes.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><mfrac><mrow><mo>-</mo><mi>x</mi></mrow><mn>2</mn></mfrac></math>"#;
+        test_braille("Dedicon", expr, r#"-x/2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 6: Functienaam direct na een variabele: een spatie ervoor en erna.
+    #[test]
+    fn voorbeeld_06() -> Result<()> {
+        let expr = r#"<math><mi>a</mi><mi>sin</mi><mi>x</mi></math>"#;
+        test_braille("Dedicon", expr, r#"a sin x"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 7: Functienaam als tekst (mtext): een spatie tussen de naam en het argument.
+    #[test]
+    fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><mtext>sin</mtext><mi>x</mi></math>"#;
+        test_braille("Dedicon", expr, r#"sin x"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 8: Streep boven een uitdrukking die al haakjes heeft: geen extra haakjes.
+    #[test]
+    fn voorbeeld_08() -> Result<()> {
+        let expr = r#"<math><mover accent="true"><mrow><mo>(</mo><mi>a</mi><mo>+</mo><mi>b</mi><mo>)</mo></mrow><mo>¯</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"{-(a + b)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 9: Streep boven een variabele met het teken ‾ (overline).
+    #[test]
+    fn voorbeeld_09() -> Result<()> {
+        let expr = r#"<math><mover accent="true"><mi>z</mi><mo>‾</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"{-z"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 10: Streep boven twee variabelen: geen haakjes.
+    #[test]
+    fn voorbeeld_10() -> Result<()> {
+        let expr = r#"<math><mover accent="true"><mrow><mi>A</mi><mi>B</mi></mrow><mo>¯</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"{-AB"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 11: Tekst als eerste kind van een geneste rij: de spatie ervoor komt van de rij erboven.
+    #[test]
+    fn voorbeeld_11() -> Result<()> {
+        let expr = r#"<math><mi>x</mi><mo>=</mo><mn>1</mn><mrow><mtext>en</mtext><mi>y</mi><mo>=</mo><mn>2</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"x = 1 en y = 2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 12: Tekst als laatste kind van een geneste rij: de spatie erna komt van de rij erboven.
+    #[test]
+    fn voorbeeld_12() -> Result<()> {
+        let expr = r#"<math><mrow><mi>x</mi><mo>=</mo><mn>1</mn><mtext>en</mtext></mrow><mi>y</mi><mo>=</mo><mn>2</mn></math>"#;
+        test_braille("Dedicon", expr, r#"x = 1 en y = 2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 13: Tekst direct tussen haakjes: geen spaties naast de haakjes.
+    #[test]
+    fn voorbeeld_13() -> Result<()> {
+        let expr = r#"<math><mi>P</mi><mo>(</mo><mtext>geen rode knikkers</mtext><mo>)</mo></math>"#;
+        test_braille("Dedicon", expr, r#"P(geen rode knikkers)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 14: Breuk als eerste kind, twee rijen diep: een spatie ervoor komt van de rij erboven.
+    #[test]
+    fn voorbeeld_14() -> Result<()> {
+        let expr = r#"<math><mn>2</mn><mrow><mrow><mfrac><mn>1</mn><mn>3</mn></mfrac><mi>x</mi></mrow><mo>+</mo><mn>1</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"2 1/3 x + 1"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 15: Breuk als laatste kind, twee rijen diep: een spatie erna komt van de rij erboven.
+    #[test]
+    fn voorbeeld_15() -> Result<()> {
+        let expr = r#"<math><mrow><mn>1</mn><mo>+</mo><mrow><mi>x</mi><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></mrow><mi>y</mi></math>"#;
+        test_braille("Dedicon", expr, r#"1 + x 1/2 y"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 16: Breuk in een breuk: de breuk in de teller krijgt haakjes.
+    #[test]
+    fn voorbeeld_16() -> Result<()> {
+        let expr = r#"<math><mfrac><mfrac><mn>1</mn><mn>2</mn></mfrac><mn>3</mn></mfrac></math>"#;
+        test_braille("Dedicon", expr, r#"(1/2)/3"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 17: Functienaam direct na een getal: geen spatie ervoor (zoals "2sqrt(25)").
+    #[test]
+    fn voorbeeld_17() -> Result<()> {
+        let expr = r#"<math><mn>2</mn><mi>sin</mi><mi>x</mi></math>"#;
+        test_braille("Dedicon", expr, r#"2sin x"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 18: Logaritme direct na een getal: geen spatie ervoor.
+    #[test]
+    fn voorbeeld_18() -> Result<()> {
+        let expr = r#"<math><mn>3</mn><mi>log</mi><mi>x</mi></math>"#;
+        test_braille("Dedicon", expr, r#"3log x"#)?;
+        return Ok(());
+    }
+}
+
+// Dedicon examples: logica
+mod logica {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Niet voor alle.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mo>¬</mo><mo>∀</mo><mi>x</mi><mi>P</mi></math>"#;
+        test_braille("Dedicon", expr, r#"nt voor alle x P"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: omcirkelde operatoren
 // NOTE: the circled operators need discussion (see unicode.yaml).
 mod omcirkelde_operatoren {

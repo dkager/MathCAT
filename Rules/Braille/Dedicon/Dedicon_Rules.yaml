@@ -61,7 +61,8 @@
 # - There is always a space before and after a fraction: "2 1/2", "1/3 x^3"
 #   except directly after an opening or before a closing bracket: "(dK/dq)", "sqrt(1/9)"
 #   and except directly after a function application, as after a limit: "lim{x --> 0}1/x"
-#   A side only gets a space if something follows there in the same row (or in the row around it);
+#   A side only gets a space if something follows there in the same row (or in a row around it, also more than one
+#   row up when the fraction is the first or last part of those rows: "2 1/3 x + 1" with the fraction in a nested row);
 #   inside a script, root, etc. the other children are not neighbours,
 #   so brackets written by other rules (such as "sqrt(") get no space either
 #   (cleanup removes spaces at the start and end of the expression)
@@ -83,11 +84,13 @@
   - SimpleDenominator: "*[2][self::m:mi or self::m:mn or self::m:msub or self::m:msup or self::m:msubsup or self::m:msqrt or self::m:mroot or
                              (self::m:mrow and count(*)=2 and *[1][self::m:mo and (.='-' or .='\u2212')] and *[2][self::m:mn or self::m:mi]) or
                              (self::m:mrow and count(*)=3 and *[1]='d' and *[2]='\u2062' and *[3][self::m:mi])]"
+  - Before: "ancestor-or-self::*[preceding-sibling::*][1]"   # nearest element (this one or a row around it) with something before it
+  - After: "ancestor-or-self::*[following-sibling::*][1]"    # nearest element (this one or a row around it) with something after it
   replace:
   - test:
-      if: "(parent::m:mrow or parent::m:math) and preceding-sibling::*[1][not(self::m:mo and (IsInDefinition(., 'Braille', 'OpeningBrackets') or .='\u2061'))] or
-           (not(preceding-sibling::*) and
-            parent::m:mrow[parent::m:mrow or parent::m:math]/preceding-sibling::*[1][not(self::m:mo and (IsInDefinition(., 'Braille', 'OpeningBrackets') or .='\u2061'))])"
+      if: "(count($Before | .) = 1 or $Before[self::m:mrow]) and $Before[parent::m:mrow or parent::m:math] and
+           not(ancestor::*[not(self::m:mrow)][count(. | $Before/descendant::*) = count($Before/descendant::*)]) and
+           $Before/preceding-sibling::*[1][not(self::m:mo and (IsInDefinition(., 'Braille', 'OpeningBrackets') or .='\u2061'))]"
       then: [t: "𝐰"]
   - test:
     - if: "not($SimpleNumerator) or not($SimpleDenominator)"
@@ -105,9 +108,9 @@
       then: [x: "*[1]", t: "𝐰/𝐰", x: "*[2]"]
       else: [x: "*[1]", t: "/", x: "*[2]"]
   - test:
-      if: "(parent::m:mrow or parent::m:math) and following-sibling::*[1][not(self::m:mo and IsInDefinition(., 'Braille', 'ClosingBrackets'))] or
-           (not(following-sibling::*) and
-            parent::m:mrow[parent::m:mrow or parent::m:math]/following-sibling::*[1][not(self::m:mo and IsInDefinition(., 'Braille', 'ClosingBrackets'))])"
+      if: "(count($After | .) = 1 or $After[self::m:mrow]) and $After[parent::m:mrow or parent::m:math] and
+           not(ancestor::*[not(self::m:mrow)][count(. | $After/descendant::*) = count($After/descendant::*)]) and
+           $After/following-sibling::*[1][not(self::m:mo and IsInDefinition(., 'Braille', 'ClosingBrackets'))]"
       then: [t: "𝐰"]
 
 # Dedicon rules for matrices: cells separated by ":" without spaces, rows separated by ";" and a space
@@ -258,6 +261,9 @@
 
 # Dedicon rule: a function name is separated by a space from its argument: "log x", "^g log a"
 # Before brackets cleanup removes the space again: "log(8)", "det(A)"
+# After a variable there is also a space before it: "a sin x"; after a number there is none: "2sin x" (as in "2sqrt(25)").
+#   MathCAT puts an invisible times between them
+#   and the function name with its argument in a row of its own: a INVISIBLE-TIMES (sin x)
 # Same as the named-functions rule in ../ASCIIMath/ASCIIMath_Rules.yaml (FunctionNames is in definitions.yaml)
 # DISCUSSION: the Dedicon integral example writes "Intg{1/2 ~p..~p}sinxdx", i.e. "sinx" WITHOUT a space,
 #   while the logarithm examples write "log x" WITH a space. For now we chose a space after every function
@@ -273,7 +279,10 @@
   match: "IsInDefinition(., 'Braille', 'FunctionNames')"
   replace:
   - test:
-      if: "preceding-sibling::*[1][self::m:mi]"
+      if: "preceding-sibling::*[1][self::m:mi] or
+           (preceding-sibling::*[1][self::m:mo and .='\u2062'] and preceding-sibling::*[2][self::m:mi]) or
+           (not(preceding-sibling::*) and parent::m:mrow/preceding-sibling::*[1][self::m:mo and .='\u2062'] and
+            parent::m:mrow/preceding-sibling::*[2][self::m:mi])"
       then: [t: "𝐖"]
   - x: "text()"
   - t: "𝐖"
@@ -301,16 +310,20 @@
 # MathCAT strips leading and trailing whitespace from mtext during canonicalization, so the space
 # that the author put inside the mtext is lost; this rule adds it back.
 # A side gets a space if the neighbour there is not another mtext (and not a bracket, as for fractions).
-# As in the mfrac rule, the neighbour may also be found one row up (when the mtext is first or last in its row).
+# As in the mfrac rule, the neighbour may also be found in a row around it (when the mtext is first or last in its row,
+#   also more than one row up): "x = 1 en y = 2" with "en y = 2" in a nested row.
 -
   name: default
   tag: [mtext, ms]
   match: "."
+  variables:
+  - Before: "ancestor-or-self::*[preceding-sibling::*][1]"   # nearest element (this one or a row around it) with something before it
+  - After: "ancestor-or-self::*[following-sibling::*][1]"    # nearest element (this one or a row around it) with something after it
   replace:
   - test:
-      if: "(parent::m:mrow or parent::m:math) and preceding-sibling::*[1][not(self::m:mtext or (self::m:mo and IsInDefinition(., 'Braille', 'OpeningBrackets')))] or
-           (not(preceding-sibling::*) and
-            parent::m:mrow[parent::m:mrow or parent::m:math]/preceding-sibling::*[1][not(self::m:mtext or (self::m:mo and IsInDefinition(., 'Braille', 'OpeningBrackets')))])"
+      if: "(count($Before | .) = 1 or $Before[self::m:mrow]) and $Before[parent::m:mrow or parent::m:math] and
+           not(ancestor::*[not(self::m:mrow)][count(. | $Before/descendant::*) = count($Before/descendant::*)]) and
+           $Before/preceding-sibling::*[1][not(self::m:mtext or (self::m:mo and IsInDefinition(., 'Braille', 'OpeningBrackets')))]"
       then: [t: "𝐰"]
   - test:
       if: "self::m:ms"
@@ -326,9 +339,9 @@
           else: [t: "\""]
       else: [x: "text()"]
   - test:
-      if: "(parent::m:mrow or parent::m:math) and following-sibling::*[1][not(self::m:mtext or (self::m:mo and IsInDefinition(., 'Braille', 'ClosingBrackets')))] or
-           (not(following-sibling::*) and
-            parent::m:mrow[parent::m:mrow or parent::m:math]/following-sibling::*[1][not(self::m:mtext or (self::m:mo and IsInDefinition(., 'Braille', 'ClosingBrackets')))])"
+      if: "(count($After | .) = 1 or $After[self::m:mrow]) and $After[parent::m:mrow or parent::m:math] and
+           not(ancestor::*[not(self::m:mrow)][count(. | $After/descendant::*) = count($After/descendant::*)]) and
+           $After/following-sibling::*[1][not(self::m:mtext or (self::m:mo and IsInDefinition(., 'Braille', 'ClosingBrackets')))]"
       then: [t: "𝐰"]
 
 # Dedicon rule for marks over an expression: "{" mark expression, without a closing brace:
