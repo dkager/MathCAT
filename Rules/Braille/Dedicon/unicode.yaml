@@ -136,6 +136,12 @@
  - "∑": [t: "~S"]                            # 0x2211 n-ary summation
  - "∏": [t: "~P"]                            # 0x220f n-ary product
 
+# Dedicon symbols: currency (valuta); the euro and pound signs are written as they are (not ASCII)
+ - "€": [t: "€"]                             # 0x20ac euro sign
+ - "£": [t: "£"]                             # 0xa3 pound sign
+ - "¥": [t: "yen"]                           # 0xa5 yen sign
+ - "ƒ": [t: "f"]                             # 0x192 latin small letter f with hook (florin sign)
+
 # superscript digits (e.g. "m²" typed as one mi): written as a power, like the msup rule: "m^2"
  - "²": [t: "^2"]                            # 0xb2 superscript two
  - "³": [t: "^3"]                            # 0xb3 superscript three

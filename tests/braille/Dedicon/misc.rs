@@ -3,6 +3,44 @@
 // per topic). Choices that are not covered by those pages are marked with NOTE.
 // Rules: Rules/Braille/Dedicon/
 
+// Dedicon examples: valuta
+mod valuta {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Euroteken voor een bedrag.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mi>€</mi><mn>700</mn></math>"#;
+        test_braille("Dedicon", expr, r#"€700"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Pondteken voor een bedrag.
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><mi>£</mi><mn>5</mn></math>"#;
+        test_braille("Dedicon", expr, r#"£5"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Yenteken voor een bedrag.
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><mi>¥</mi><mn>100</mn></math>"#;
+        test_braille("Dedicon", expr, r#"yen100"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Florijnteken voor een bedrag.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mi>ƒ</mi><mn>2,50</mn></math>"#;
+        test_braille("Dedicon", expr, r#"f2,50"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: griekse letters
 // NOTE: the Greek letters still need to be checked with Dedicon (see unicode.yaml).
 mod griekse_letters {
