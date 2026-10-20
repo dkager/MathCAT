@@ -10,7 +10,7 @@ use crate::prefs::PreferenceManager;
 use std::cell::Ref;
 use regex::{Captures, Regex, RegexSet};
 use phf::{phf_map, phf_set};
-use crate::speech::{BRAILLE_RULES, SpeechRulesWithContext, braille_replace_chars, make_quoted_string};
+use crate::speech::{BRAILLE_RULES, POSTFIX_CONCAT_INDICATOR, SpeechRulesWithContext, braille_replace_chars, make_quoted_string};
 use crate::canonicalize::get_parent;
 use std::borrow::Cow;
 use std::ops::Range;
@@ -2297,19 +2297,14 @@ fn handle_contractions(full_chars: &[char], start: usize, end: usize, mut result
     }
 
     fn init_patterns(contractions: &[Replacement]) -> RegexSet {
-        let mut vec: Vec<&str> = Vec::with_capacity(contractions.len());
-        for contraction in contractions {
-            vec.push(&contraction.pattern);
-        }
-        return RegexSet::new(&vec).unwrap();
+        let patterns = contractions.iter().map(|c| c.pattern.as_str());
+        return RegexSet::new(patterns).unwrap();
     }
 
     fn init_regex(contractions: &[Replacement]) -> Vec<Regex> {
-        let mut vec = Vec::with_capacity(contractions.len());
-        for contraction in contractions {
-            vec.push(Regex::new(&contraction.pattern).unwrap());
-        }
-        return vec;
+        return contractions.iter()
+            .map(|c| Regex::new(&c.pattern).unwrap())
+            .collect();
     }
 }
 
@@ -3045,7 +3040,7 @@ fn LaTeX_cleanup(_pref_manager: Ref<PreferenceManager>, raw_braille: String) -> 
     static REMOVE_SPACE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r" ([\^_,;)\]}])").unwrap()); // '^', '_', ',', ';', ')', ']', '}'
     static COLLAPSE_SPACES: LazyLock<Regex> = LazyLock::new(|| Regex::new(r" +").unwrap());
     // debug!("LaTeX_cleanup: start={}", raw_braille);
-    let result = raw_braille.replace('𝐖', " ");
+    let result = raw_braille.replace('𝐖', " ").replace(POSTFIX_CONCAT_INDICATOR, "");
     // let result = COLLAPSE_SPACES.replace_all(&raw_braille, "⠀");
     let result = COLLAPSE_SPACES.replace_all(&result, " ");
     // debug!("After collapse: {}", &result);
