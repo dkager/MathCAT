@@ -15,7 +15,7 @@
   tag: "!*"
   match: "not(self::m:math) and not($MatchingWhitespace) and (@data-previous-space-width >= 0.7 or @data-following-space-width >= 0.7)"
   replace:
-   - with:
+  - with:
       variables: [MatchingWhitespace: "true()"]
       replace:
       - test:
