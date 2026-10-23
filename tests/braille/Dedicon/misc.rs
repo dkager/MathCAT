@@ -706,6 +706,26 @@ mod getallen_met_spaties {
         test_braille("Dedicon", negative, r#"-0,123 456"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 9: Duizendtal dat al een punt als scheidingsteken heeft: er wordt niets toegevoegd.
+    #[test]
+    fn voorbeeld_09() -> Result<()> {
+        let expr = r#"<math><mn>1.000</mn></math>"#;
+        test_braille("Dedicon", expr, r#"1.000"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>1.000</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-1.000"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 10: Groot getal met punten als scheidingsteken en een decimale komma: er wordt niets toegevoegd.
+    #[test]
+    fn voorbeeld_10() -> Result<()> {
+        let expr = r#"<math><mn>1.000.000,5</mn></math>"#;
+        test_braille("Dedicon", expr, r#"1.000.000,5"#)?;
+        let negative = r#"<math><mrow><mo>-</mo><mn>1.000.000,5</mn></mrow></math>"#;
+        test_braille("Dedicon", negative, r#"-1.000.000,5"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: negatieve getallen
