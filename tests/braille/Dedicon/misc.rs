@@ -232,6 +232,14 @@ mod samengestelde_constructies {
         test_braille("Dedicon", expr, r#"sin ~a + 2sin ~b"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 21: Functienaam voor een negatief argument: de spatie ertussen blijft staan.
+    #[test]
+    fn voorbeeld_21() -> Result<()> {
+        let expr = r#"<math><mi>sin</mi><mrow><mo>-</mo><mi>x</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"sin -x"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: logica
@@ -403,6 +411,14 @@ mod griekse_letters {
         test_braille("Dedicon", expr, r#"3~F + 2~pr"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 5: Griekse letter na een macht en na een index: een spatie beëindigt de index of exponent.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><msup><mi>x</mi><mn>2</mn></msup><mi>π</mi><mo>+</mo><msub><mi>a</mi><mi>n</mi></msub><mi>α</mi></math>"#;
+        test_braille("Dedicon", expr, r#"x^2 ~p + a_n ~a"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: accenten
@@ -449,6 +465,14 @@ mod accenten {
     fn voorbeeld_05() -> Result<()> {
         let expr = r#"<math><mrow><mi>ST</mi><mo>'</mo><mo>=</mo><mn>5</mn></mrow></math>"#;
         test_braille("Dedicon", expr, r#"ST' = 5"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 6: Streep boven een variabele na een macht: een spatie beëindigt de exponent.
+    #[test]
+    fn voorbeeld_06() -> Result<()> {
+        let expr = r#"<math><msup><mi>x</mi><mn>2</mn></msup><mover accent="true"><mi>z</mi><mo>¯</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"x^2 {-z"#)?;
         return Ok(());
     }
 }
@@ -1042,6 +1066,14 @@ mod meetkunde {
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><mrow><mo>∆</mo><mi>AEZ</mi><mo>=</mo><mfrac><mn>1</mn><mn>6</mn></mfrac><mo>⋅</mo><mtext>opp.</mtext><mo>∆</mo><mi>ABC</mi></mrow></math>"#;
         test_braille("Dedicon", expr, r#"drieh AEZ = 1/6 * opp. drieh ABC"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 5: Hoekteken voor een Griekse letter: de spatie ertussen blijft staan.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><mo>∠</mo><mi>α</mi></math>"#;
+        test_braille("Dedicon", expr, r#"hoek ~a"#)?;
         return Ok(());
     }
 }

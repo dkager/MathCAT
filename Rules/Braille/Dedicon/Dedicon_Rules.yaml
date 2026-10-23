@@ -58,16 +58,13 @@
   - t: ")"
 
 # Dedicon rule for fractions: numerator "/" denominator, in principle without spaces ("3/4")
-# - There is always a space before and after a fraction: "2 1/2", "1/3 x^3"
-#   except directly after an opening or before a closing bracket: "(dK/dq)", "sqrt(1/9)",
-#   directly after a function application, as after a limit: "lim{x --> 0}1/x",
-#   and before a comma or semicolon: "C(1 1/2, 3)"
-#   (but not before a comma that the mfenced-separator-next-to-operator rule leaves out: "[1/3 x^3]")
-#   A side only gets a space if something follows there in the same row (or in a row around it, also more than one
-#   row up when the fraction is the first or last part of those rows: "2 1/3 x + 1" with the fraction in a nested row);
-#   inside a script, root, etc. the other children are not neighbours,
-#   so brackets written by other rules (such as "sqrt(") get no space either
-#   (cleanup removes spaces at the start and end of the expression)
+# - There is a space before and after a fraction: "2 1/2", "1/3 x^3", "- 1/2"
+#   These are removable spaces (𝐖): Dedicon_cleanup in src/braille.rs removes them next to brackets and punctuation,
+#   "(dK/dq)", "sqrt(1/9)", "C(1 1/2, 3)", "lim{x --> 0}1/x", and at the start and end of the expression
+#   Before an opening bracket the space is kept, so the bracket does not seem to belong to the denominator:
+#   "d/dq (dK/dq)", "1/2 (x - 6)^2", "1 1/5 (x - 1)" (with the mixed number in a row of its own).
+#   The bracket may be in a row around the fraction, if the fraction is the last part of those rows;
+#   inside a script, root, etc. the other children are not neighbours ("sqrt(1/2)(x)")
 # - Only the part that needs parentheses gets them: "(-5 + 3)/11", "21/(3sqrt(2))", "(4 + 2)/(4 - 2)"
 # - Simple parts need no parentheses: a variable, a number, a negative number or variable ("-5/11"),
 #   a root (it has its own parentheses: "7/sqrt(6)", "7/root_3(6)"), a sub- or superscript,
@@ -86,14 +83,9 @@
   - SimpleDenominator: "*[2][self::m:mi or self::m:mn or self::m:msub or self::m:msup or self::m:msubsup or self::m:msqrt or self::m:mroot or
                              (self::m:mrow and count(*)=2 and *[1][self::m:mo and (.='-' or .='\u2212')] and *[2][self::m:mn or self::m:mi]) or
                              (self::m:mrow and count(*)=3 and *[1]='d' and *[2]='\u2062' and *[3][self::m:mi])]"
-  - Before: "ancestor-or-self::*[preceding-sibling::*][1]"   # nearest element (this one or a row around it) with something before it
   - After: "ancestor-or-self::*[following-sibling::*][1]"    # nearest element (this one or a row around it) with something after it
   replace:
-  - test:
-      if: "(count($Before | .) = 1 or $Before[self::m:mrow]) and $Before[parent::m:mrow or parent::m:math] and
-           not(ancestor::*[not(self::m:mrow)][count(. | $Before/descendant::*) = count($Before/descendant::*)]) and
-           $Before/preceding-sibling::*[1][not(self::m:mo and (IsInDefinition(., 'Braille', 'OpeningBrackets') or .='\u2061'))]"
-      then: [t: "𝐰"]
+  - t: "𝐖"
   - test:
     - if: "not($SimpleNumerator) or not($SimpleDenominator)"
       then:
@@ -112,10 +104,10 @@
   - test:
       if: "(count($After | .) = 1 or $After[self::m:mrow]) and $After[parent::m:mrow or parent::m:math] and
            not(ancestor::*[not(self::m:mrow)][count(. | $After/descendant::*) = count($After/descendant::*)]) and
-           $After/following-sibling::*[1][not(self::m:mo and (IsInDefinition(., 'Braille', 'ClosingBrackets') or .=';' or
-                                             (.=',' and not(@data-changed='from_mfenced' and
-                                                            (preceding-sibling::*[1][self::m:mo] or following-sibling::*[1][self::m:mo])))))]"
+           ($After/following-sibling::*[not(self::m:mo and .='\u2062')][1]/descendant-or-self::*[not(*)])[1]
+             [self::m:mo and IsInDefinition(., 'Braille', 'OpeningBrackets')]"
       then: [t: "𝐰"]
+      else: [t: "𝐖"]
 
 # Dedicon rules for matrices: cells separated by ":" without spaces, rows separated by ";" and a space
 #   "[a:b:c; d:e:f; g:h:i]", "det(A) = |a:b:c; d:e:f; g:h:i|", "[1 1/2:1; 2 1/4:2]"
@@ -264,8 +256,7 @@
 # After a variable there is also a space before it: "a sin x"; after a number there is none: "2sin x" (as in "2sqrt(25)").
 #   MathCAT puts an invisible times between them
 #   and the function name with its argument in a row of its own: a INVISIBLE-TIMES (sin x)
-# The space after the name is kept when the argument starts with something other than an opening bracket,
-#   such as a Greek letter or a minus sign: "sin ~a", "sin -x" (cleanup would otherwise remove it: "sin~a")
+# The space after the name stays before a Greek letter or a minus sign: "sin ~a", "sin -x" (see Dedicon_cleanup in src/braille.rs)
 # Based on the named-functions rule in ../ASCIIMath/ASCIIMath_Rules.yaml (FunctionNames is in definitions.yaml),
 #   which only checks for a variable directly before the name and always writes a removable space after it
 # DISCUSSION: the Dedicon integral example writes "Intg{1/2 ~p..~p}sinxdx", i.e. "sinx" WITHOUT a space,
@@ -288,11 +279,7 @@
             parent::m:mrow/preceding-sibling::*[2][self::m:mi])"
       then: [t: "𝐖"]
   - x: "text()"
-  - test:
-      if: "following-sibling::*[1][self::m:mo and .='\u2061'] and
-           (following-sibling::*[2]/descendant-or-self::*[not(*)])[1][not(self::m:mo and IsInDefinition(., 'Braille', 'OpeningBrackets'))]"
-      then: [t: "𝐰"]
-      else: [t: "𝐖"]
+  - t: "𝐖"
 
 # Dedicon rule: variables are passed through literally
 -
@@ -316,7 +303,7 @@
 #   (as the ms rule in ../ASCIIMath/ASCIIMath_Rules.yaml)
 # MathCAT strips leading and trailing whitespace from mtext during canonicalization, so the space
 # that the author put inside the mtext is lost; this rule adds it back.
-# Spaces inside the text are kept as they are, also after a point: "opp. vloer"
+# Spaces inside the text are kept, also after a point: "opp. vloer" (see Dedicon_cleanup in src/braille.rs)
 # A side gets a space if the neighbour there is not another mtext (and not a bracket, as for fractions).
 # As in the mfrac rule, the neighbour may also be found in a row around it (when the mtext is first or last in its row,
 #   also more than one row up): "x = 1 en y = 2" with "en y = 2" in a nested row.
@@ -345,7 +332,7 @@
           if: "string(@rquote)!=''"
           then: [x: "@rquote"]
           else: [t: "\""]
-      else: [x: "translate(text(), ' ', '\u00A0')"]    # a no-break space is a space that is kept (unicode.yaml)
+      else: [x: "text()"]
   - test:
       if: "(count($After | .) = 1 or $After[self::m:mrow]) and $After[parent::m:mrow or parent::m:math] and
            not(ancestor::*[not(self::m:mrow)][count(. | $After/descendant::*) = count($After/descendant::*)]) and
