@@ -26,7 +26,7 @@
 
 # Function names that are separated by a space from their argument (see the named-functions rule in Dedicon_Rules.yaml)
 # Based on FunctionNames in ../ASCIIMath/definitions.yaml, without the ASCIIMath-only keywords
-# (lambda, and, or, if, abs, norm, floor, ceil) and without lim: Dedicon writes "lim{...}u_n" without a space
+# (lambda, Lambda, and, or, if, abs, norm, floor, ceil) and without lim and Lim: Dedicon writes "lim{...}u_n" without a space
 - FunctionNames: {
     "sin", "cos", "tan", "arcsin", "arccos", "arctan", "sinh", "cosh", "tanh", "cot", "coth", "sech", "csch", "sec", "csc",
     "Sin", "Cos", "Tan", "Arcsin", "Arccos", "Arctan", "Sinh", "Cosh", "Tanh", "Cot", "Sec", "Csc",
@@ -42,7 +42,7 @@
   }
 
 # Quantifiers: the variable after them is separated by a space from the formula that follows
-# (see the rule in Dedicon_Rules.yaml): "er is een x (Ax of voor alle y Bxy)"
+# (see the mo rule in Dedicon_Rules.yaml): "er is een x (Ax of voor alle y Bxy)"
 - Quantifiers: {
     "∀", "∃",
   }
@@ -69,7 +69,8 @@
     "^": "^", "ˆ": "^", "̂": "^",    # circumflex accent, modifier letter circumflex, combining circumflex
   }
 
-# Brackets: no space directly after an opening or before a closing bracket (see the mfrac rule in Dedicon_Rules.yaml)
+# Brackets: no space directly after an opening or before a closing bracket (see the mfrac and mtext rules in
+#   Dedicon_Rules.yaml); a function name keeps no space before an opening bracket (named-functions rule)
 # "|" is left out on purpose: it is both an opening and a closing bracket
 - OpeningBrackets: {
     "(", "[", "{", "⟨",

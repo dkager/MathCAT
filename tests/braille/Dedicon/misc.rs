@@ -216,6 +216,22 @@ mod samengestelde_constructies {
         test_braille("Dedicon", expr, r#"3log x"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 19: Tekst met een afkorting: de spatie na de punt blijft staan.
+    #[test]
+    fn voorbeeld_19() -> Result<()> {
+        let expr = r#"<math><mrow><mtext>opp. vloer</mtext><mo>=</mo><mn>12</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"opp. vloer = 12"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 20: Functienaam voor een Griekse letter: de spatie ertussen blijft staan, ook na een getal.
+    #[test]
+    fn voorbeeld_20() -> Result<()> {
+        let expr = r#"<math><mi>sin</mi><mi>α</mi><mo>+</mo><mn>2</mn><mi>sin</mi><mi>β</mi></math>"#;
+        test_braille("Dedicon", expr, r#"sin ~a + 2sin ~b"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: logica
@@ -360,6 +376,33 @@ mod griekse_letters {
         test_braille("Dedicon", expr, r#"~s + ~s"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 2: Alle Griekse hoofdletters.
+    /// NOTE: to check with Dedicon, especially eta "~Û", theta "~Ô" and chi "~Ç".
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><mi>Α</mi><mo>,</mo><mi>Β</mi><mo>,</mo><mi>Γ</mi><mo>,</mo><mi>Δ</mi><mo>,</mo><mi>Ε</mi><mo>,</mo><mi>Ζ</mi><mo>,</mo><mi>Η</mi><mo>,</mo><mi>Θ</mi><mo>,</mo><mi>Ι</mi><mo>,</mo><mi>Κ</mi><mo>,</mo><mi>Λ</mi><mo>,</mo><mi>Μ</mi><mo>,</mo><mi>Ν</mi><mo>,</mo><mi>Ξ</mi><mo>,</mo><mi>Ο</mi><mo>,</mo><mi>Π</mi><mo>,</mo><mi>Ρ</mi><mo>,</mo><mi>Σ</mi><mo>,</mo><mi>Τ</mi><mo>,</mo><mi>Υ</mi><mo>,</mo><mi>Φ</mi><mo>,</mo><mi>Χ</mi><mo>,</mo><mi>Ψ</mi><mo>,</mo><mi>Ω</mi></math>"#;
+        test_braille("Dedicon", expr, r#"~A, ~B, ~G, ~D, ~E, ~Z, ~Û, ~Ô, ~I, ~K, ~L, ~M, ~N, ~X, ~O, ~P, ~R, ~S, ~T, ~U, ~F, ~Ç, ~Y, ~W"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Alle Griekse kleine letters.
+    /// NOTE: to check with Dedicon, especially eta "~û", theta "~ô" and chi "~ç".
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><mi>α</mi><mo>,</mo><mi>β</mi><mo>,</mo><mi>γ</mi><mo>,</mo><mi>δ</mi><mo>,</mo><mi>ε</mi><mo>,</mo><mi>ζ</mi><mo>,</mo><mi>η</mi><mo>,</mo><mi>θ</mi><mo>,</mo><mi>ι</mi><mo>,</mo><mi>κ</mi><mo>,</mo><mi>λ</mi><mo>,</mo><mi>μ</mi><mo>,</mo><mi>ν</mi><mo>,</mo><mi>ξ</mi><mo>,</mo><mi>ο</mi><mo>,</mo><mi>π</mi><mo>,</mo><mi>ρ</mi><mo>,</mo><mi>σ</mi><mo>,</mo><mi>τ</mi><mo>,</mo><mi>υ</mi><mo>,</mo><mi>φ</mi><mo>,</mo><mi>χ</mi><mo>,</mo><mi>ψ</mi><mo>,</mo><mi>ω</mi></math>"#;
+        test_braille("Dedicon", expr, r#"~a, ~b, ~g, ~d, ~e, ~z, ~û, ~ô, ~i, ~k, ~l, ~m, ~n, ~x, ~o, ~p, ~r, ~s, ~t, ~u, ~f, ~ç, ~y, ~w"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Griekse letter direct na een getal en voor een variabele.
+    /// NOTE: no space, as for other letters ("3x"); to check with Dedicon whether "2~pr" is clear.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mn>3</mn><mi>Φ</mi><mo>+</mo><mn>2</mn><mi>π</mi><mi>r</mi></math>"#;
+        test_braille("Dedicon", expr, r#"3~F + 2~pr"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: accenten
@@ -398,6 +441,14 @@ mod accenten {
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><mover accent="true"><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>^</mo></mover><mo>=</mo><mn>1</mn></math>"#;
         test_braille("Dedicon", expr, r#"{^(a + b) = 1"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 5: Accent als los operatorteken na een lijnstuk.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><mrow><mi>ST</mi><mo>'</mo><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"ST' = 5"#)?;
         return Ok(());
     }
 }
@@ -556,6 +607,15 @@ mod witruimte {
         test_braille("Dedicon", expr, r#"sqrt()"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 8: Een no-break space aan het eind van een variabele blijft staan.
+    /// NOTE: putting a space inside an mi is an undesired practice; how to handle it needs further discussion.
+    #[test]
+    fn voorbeeld_08() -> Result<()> {
+        let expr = r#"<math><mrow><mi>opp.&#xA0;</mi><mi>I</mi><mo>+</mo><mi>opp.&#xA0;</mi><mi>II</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"opp. I + opp. II"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: getallen met spaties
@@ -676,6 +736,14 @@ mod negatieve_getallen {
         test_braille("Dedicon", expr, r#"y = -0,5x^2 + 4,5"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 4: Negatief decimaal getal met puntjes erachter.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mrow><mi>x</mi><mo>=</mo><mn>-16,899...</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"x = -16,899..."#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: sommen met mingetallen
@@ -763,6 +831,14 @@ mod breuken {
         test_braille("Dedicon", expr, r#"= (-5 + 3)/11"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 7: Haakjes in de noemer: de hele noemer krijgt haakjes eromheen.
+    #[test]
+    fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><mfrac><mi>xy</mi><mrow><mi>x</mi><mrow><mo>(</mo><mrow><mi>x</mi><mo>+</mo><mi>y</mi></mrow><mo>)</mo></mrow></mrow></mfrac></math>"#;
+        test_braille("Dedicon", expr, r#"xy/(x(x + y))"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: wortels
@@ -808,6 +884,14 @@ mod wortels {
     fn voorbeeld_05() -> Result<()> {
         let expr = r#"<math display="inline"><mrow><mfrac><mn>7</mn><mroot><mn>6</mn><mn>3</mn></mroot></mfrac></mrow></math>"#;
         test_braille("Dedicon", expr, r#"7/root_3(6)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 6: Wortel aan het eind van een uitdrukking tussen haakjes.
+    #[test]
+    fn voorbeeld_06() -> Result<()> {
+        let expr = r#"<math><mrow><mi>x</mi><mrow><mo>(</mo><mrow><mn>6</mn><mo>-</mo><msqrt><mi>x</mi></msqrt></mrow><mo>)</mo></mrow></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"x(6 - sqrt(x))"#)?;
         return Ok(());
     }
 }
@@ -884,6 +968,24 @@ mod machten {
         test_braille("Dedicon", expr, r#"(3a^2)/b^3"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 6: Macht van een negatief getal tussen haakjes, in een langere berekening.
+    /// The minus sign before the fraction is separated from it by a space; the brackets of mfenced (without a
+    /// separators attribute) get no commas next to the minus sign.
+    #[test]
+    fn voorbeeld_06() -> Result<()> {
+        let expr = r#"<math display="inline"><mrow><mrow><mi>f</mi><mfenced open="(" close=")"><mo>-</mo><mn>8</mn></mfenced><mo>=</mo><mo>-</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>⋅</mo><msup><mfenced open="(" close=")"><mo>-</mo><mn>8</mn></mfenced><mn>2</mn></msup><mo>+</mo><mn>2</mn><mo>⋅</mo><mn>-8</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>-47</mn></mrow></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"f(-8) = - 1/2 * (-8)^2 + 2 * -8 + 1 = -47"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 7: Macht van een product met een wortel tussen haakjes.
+    #[test]
+    fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><msup><mrow><mo>(</mo><mrow><mn>2</mn><msqrt><mn>2</mn></msqrt></mrow><mo>)</mo></mrow><mn>2</mn></msup></math>"#;
+        test_braille("Dedicon", expr, r#"(2sqrt(2))^2"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: meetkunde
@@ -904,6 +1006,22 @@ mod meetkunde {
     fn voorbeeld_02() -> Result<()> {
         let expr = r#"<math display="inline"><mrow><mi mathvariant="normal">∠A</mi><mo>=</mo><mo>...</mo><mrow><mo>°</mo></mrow></mrow></math>"#;
         test_braille("Dedicon", expr, r#"hoek A = ...gr"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Hoekteken en gradenteken als losse operatortekens.
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><mrow><mo>∠</mo><mi>O</mi><mo>=</mo><mn>90</mn><mo>°</mo></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"hoek O = 90 gr"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Driehoekteken als los operatorteken, met een breuk en een afkorting.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mrow><mo>∆</mo><mi>AEZ</mi><mo>=</mo><mfrac><mn>1</mn><mn>6</mn></mfrac><mo>⋅</mo><mtext>opp.</mtext><mo>∆</mo><mi>ABC</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"drieh AEZ = 1/6 * opp. drieh ABC"#)?;
         return Ok(());
     }
 }
@@ -966,6 +1084,38 @@ mod haakjes_en_leestekens {
     fn voorbeeld_02() -> Result<()> {
         let expr = r#"<math display="inline"><mrow><mi>y</mi><mo>=</mo><mrow><mo>-</mo><mi>x</mi></mrow><mo>+</mo><mn>2</mn></mrow></math>"#;
         test_braille("Dedicon", expr, r#"y = -x + 2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Coördinaten met een gemengd getal voor de komma: geen spatie voor de komma.
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><mrow><mi>C</mi><mrow><mo>(</mo><mrow><mn>1</mn><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mn>3</mn></mrow><mo>)</mo></mrow></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"C(1 1/2, 3)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Coördinaten met een gemengd getal na de komma.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mrow><mi>C</mi><mrow><mo>(</mo><mrow><mn>0</mn><mo>,</mo><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow><mo>)</mo></mrow></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"C(0, 3 1/2)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 5: Als voorbeeld 3, met mfenced en een komma als scheidingsteken.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><mrow><mi>C</mi><mfenced open="(" close=")" separators=","><mrow><mn>1</mn><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow><mn>3</mn></mfenced></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"C(1 1/2, 3)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 6: Als voorbeeld 4, met mfenced en een komma als scheidingsteken.
+    #[test]
+    fn voorbeeld_06() -> Result<()> {
+        let expr = r#"<math><mrow><mi>C</mi><mfenced open="(" close=")" separators=","><mn>0</mn><mrow><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></mfenced></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"C(0, 3 1/2)"#)?;
         return Ok(());
     }
 }
@@ -1111,6 +1261,34 @@ mod statistiek {
     fn voorbeeld_01() -> Result<()> {
         let expr = r#"<math><mrow><mover accent="true"><mi>X</mi><mo stretchy="true">-</mo></mover></mrow></math>"#;
         test_braille("Dedicon", expr, r#"{-X"#)?;
+        return Ok(());
+    }
+}
+
+// Dedicon examples: procenten
+mod procenten {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Verschil van twee percentages: spaties rond de min, zoals bij andere getallen.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mrow><mn>100</mn><mo>%</mo><mo>-</mo><mn>7</mn><mo>%</mo></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"100% - 7%"#)?;
+        return Ok(());
+    }
+}
+
+// Dedicon examples: stelsels van vergelijkingen
+mod stelsels_vergelijkingen {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Stelsel van twee vergelijkingen met een accolade: de vergelijkingen gescheiden door ";".
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mrow><mo>{</mo><mtable><mtr><mtd><mi>x</mi><mo>+</mo><mi>y</mi><mo>=</mo><mn>380</mn></mtd></mtr><mtr><mtd><mn>11,5</mn><mi>x</mi><mo>+</mo><mn>17,25</mn><mi>y</mi><mo>=</mo><mn>5865</mn></mtd></mtr></mtable></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"{x + y = 380; 11,5x + 17,25y = 5865"#)?;
         return Ok(());
     }
 }

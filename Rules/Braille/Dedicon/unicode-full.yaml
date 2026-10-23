@@ -1,4 +1,7 @@
 ---
+# Dedicon: rarely used characters (the common ones are in unicode.yaml)
+
+# letters with diacritics (as in Dutch and French words): written as they are
  - "á": [t: "á"]
  - "à": [t: "à"]
  - "â": [t: "â"]

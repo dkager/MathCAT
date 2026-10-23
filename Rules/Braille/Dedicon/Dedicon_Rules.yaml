@@ -2,7 +2,7 @@
 # Dedicon: Dutch math notation in ASCII
 # Rules are based on ../ASCIIMath/ASCIIMath_Rules.yaml
 # Spaces: "𝐖" is a space that cleanup may remove, "𝐰" is a space that is always kept
-# Rule order follows ../ASCIIMath/ASCIIMath_Rules.yaml
+# Rule order roughly follows ../ASCIIMath/ASCIIMath_Rules.yaml
 
 # Dedicon rule for white space (mspace): MathCAT removes an mspace between other elements and puts its width (in em)
 #   on a neighbour as data-previous-space-width/data-following-space-width.
@@ -50,7 +50,7 @@
   - test:
     - if: "*[2][IsNode(., 'leaf') or (self::m:mrow and count(*)=2 and *[1][self::m:mo and (.='-' or .='\u2212' or .='\u2013')] and *[2][IsNode(., 'leaf')]) or (self::m:mrow and not(*[not(IsNode(., 'leaf'))]) and not(m:mo[not(.='\u2062' or .='\u2063')]))]"
       then: [x: "*[2]"]
-    - else_if: "*[2][IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')]"
+    - else_if: "*[2][IsBracketed(., '', '')]"
       then: [x: "*[2]"]    # already bracketed
       else: [t: "(", x: "*[2]", t: ")"]
   - t: "("
@@ -59,8 +59,10 @@
 
 # Dedicon rule for fractions: numerator "/" denominator, in principle without spaces ("3/4")
 # - There is always a space before and after a fraction: "2 1/2", "1/3 x^3"
-#   except directly after an opening or before a closing bracket: "(dK/dq)", "sqrt(1/9)"
-#   and except directly after a function application, as after a limit: "lim{x --> 0}1/x"
+#   except directly after an opening or before a closing bracket: "(dK/dq)", "sqrt(1/9)",
+#   directly after a function application, as after a limit: "lim{x --> 0}1/x",
+#   and before a comma or semicolon: "C(1 1/2, 3)"
+#   (but not before a comma that the mfenced-separator-next-to-operator rule leaves out: "[1/3 x^3]")
 #   A side only gets a space if something follows there in the same row (or in a row around it, also more than one
 #   row up when the fraction is the first or last part of those rows: "2 1/3 x + 1" with the fraction in a nested row);
 #   inside a script, root, etc. the other children are not neighbours,
@@ -110,7 +112,9 @@
   - test:
       if: "(count($After | .) = 1 or $After[self::m:mrow]) and $After[parent::m:mrow or parent::m:math] and
            not(ancestor::*[not(self::m:mrow)][count(. | $After/descendant::*) = count($After/descendant::*)]) and
-           $After/following-sibling::*[1][not(self::m:mo and IsInDefinition(., 'Braille', 'ClosingBrackets'))]"
+           $After/following-sibling::*[1][not(self::m:mo and (IsInDefinition(., 'Braille', 'ClosingBrackets') or .=';' or
+                                             (.=',' and not(@data-changed='from_mfenced' and
+                                                            (preceding-sibling::*[1][self::m:mo] or following-sibling::*[1][self::m:mo])))))]"
       then: [t: "𝐰"]
 
 # Dedicon rules for matrices: cells separated by ":" without spaces, rows separated by ";" and a space
@@ -139,21 +143,14 @@
 # Dedicon rule: an empty cell is written as "gg": "[a:gg; c:d]"
 # MathCAT fills an empty cell (or a cell with only white space) with an mtext marked data-empty-in-2D
 -
-  name: empty-cell
-  tag: mtd
-  match: "count(*)=1 and *[1][@data-empty-in-2D='true']"
-  replace:
-  - t: "gg"
-  - test:
-      if: "following-sibling::*"
-      then: [t: ":"]
-
--
   name: default
   tag: mtd
   match: "."
   replace:
-  - x: "*"
+  - test:
+      if: "count(*)=1 and *[1][@data-empty-in-2D='true']"
+      then: [t: "gg"]
+      else: [x: "*"]
   - test:
       if: "following-sibling::*"
       then: [t: ":"]
@@ -206,6 +203,8 @@
 # - AlwaysSpacing operators ("=") always get a space before and after them
 # - AddSpacing operators get a space before and after them
 #   Only for binary use (something on both sides), so a leading minus as in "-x" stays attached
+#   Exception: after a percent sign MathCAT reads "100 % - 7 %" as 100 % (-7) %, so the minus is the first child
+#   of a row after the "%"; it is binary all the same: "100% - 7%"
 # - Division signs (DivisionSlash) become "/" without spaces ("54/9"),
 #   except when a space is needed to end a sub- or superscript ("u_n / v_n")
 # - Invisible operators stay invisible ("3x"); next to a fraction the space comes from the mfrac rule
@@ -222,7 +221,8 @@
   - test:
     - if: "IsInDefinition(., 'Braille', 'AlwaysSpacing')"
       then: [t: "𝐰", x: "text()", t: "𝐰"]
-    - else_if: "IsInDefinition(., 'Braille', 'AddSpacing') and preceding-sibling::* and following-sibling::*"
+    - else_if: "IsInDefinition(., 'Braille', 'AddSpacing') and following-sibling::* and
+                (preceding-sibling::* or parent::m:mrow/preceding-sibling::*[1][self::m:mo and (.='%' or .='‰')])"
       then: [t: "𝐰", x: "text()", t: "𝐰"]
     - else_if: "IsInDefinition(., 'Braille', 'SpaceAfter')"
       then: [x: "text()", t: "𝐰"]
@@ -264,7 +264,10 @@
 # After a variable there is also a space before it: "a sin x"; after a number there is none: "2sin x" (as in "2sqrt(25)").
 #   MathCAT puts an invisible times between them
 #   and the function name with its argument in a row of its own: a INVISIBLE-TIMES (sin x)
-# Same as the named-functions rule in ../ASCIIMath/ASCIIMath_Rules.yaml (FunctionNames is in definitions.yaml)
+# The space after the name is kept when the argument starts with something other than an opening bracket,
+#   such as a Greek letter or a minus sign: "sin ~a", "sin -x" (cleanup would otherwise remove it: "sin~a")
+# Based on the named-functions rule in ../ASCIIMath/ASCIIMath_Rules.yaml (FunctionNames is in definitions.yaml),
+#   which only checks for a variable directly before the name and always writes a removable space after it
 # DISCUSSION: the Dedicon integral example writes "Intg{1/2 ~p..~p}sinxdx", i.e. "sinx" WITHOUT a space,
 #   while the logarithm examples write "log x" WITH a space. For now we chose a space after every function
 #   name ("sin x"); the expected output of that test was changed accordingly.
@@ -285,7 +288,11 @@
             parent::m:mrow/preceding-sibling::*[2][self::m:mi])"
       then: [t: "𝐖"]
   - x: "text()"
-  - t: "𝐖"
+  - test:
+      if: "following-sibling::*[1][self::m:mo and .='\u2061'] and
+           (following-sibling::*[2]/descendant-or-self::*[not(*)])[1][not(self::m:mo and IsInDefinition(., 'Braille', 'OpeningBrackets'))]"
+      then: [t: "𝐰"]
+      else: [t: "𝐖"]
 
 # Dedicon rule: variables are passed through literally
 -
@@ -309,6 +316,7 @@
 #   (as the ms rule in ../ASCIIMath/ASCIIMath_Rules.yaml)
 # MathCAT strips leading and trailing whitespace from mtext during canonicalization, so the space
 # that the author put inside the mtext is lost; this rule adds it back.
+# Spaces inside the text are kept as they are, also after a point: "opp. vloer"
 # A side gets a space if the neighbour there is not another mtext (and not a bracket, as for fractions).
 # As in the mfrac rule, the neighbour may also be found in a row around it (when the mtext is first or last in its row,
 #   also more than one row up): "x = 1 en y = 2" with "en y = 2" in a nested row.
@@ -337,7 +345,7 @@
           if: "string(@rquote)!=''"
           then: [x: "@rquote"]
           else: [t: "\""]
-      else: [x: "text()"]
+      else: [x: "translate(text(), ' ', '\u00A0')"]    # a no-break space is a space that is kept (unicode.yaml)
   - test:
       if: "(count($After | .) = 1 or $After[self::m:mrow]) and $After[parent::m:mrow or parent::m:math] and
            not(ancestor::*[not(self::m:mrow)][count(. | $After/descendant::*) = count($After/descendant::*)]) and
@@ -357,7 +365,7 @@
   - t: "{"
   - x: "DefinitionValue(*[2], 'Braille', 'Accents')"
   - test:
-      if: "*[1][(IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')) or not(descendant-or-self::m:mo[IsInDefinition(., 'Braille', 'AlwaysSpacing') or IsInDefinition(., 'Braille', 'SpaceAfter') or (IsInDefinition(., 'Braille', 'AddSpacing') and preceding-sibling::* and following-sibling::*)] or descendant-or-self::m:mtext)]"
+      if: "*[1][IsBracketed(., '', '') or not(descendant-or-self::m:mo[IsInDefinition(., 'Braille', 'AlwaysSpacing') or IsInDefinition(., 'Braille', 'SpaceAfter') or (IsInDefinition(., 'Braille', 'AddSpacing') and preceding-sibling::* and following-sibling::*)] or descendant-or-self::m:mtext)]"
       then: [x: "*[1]"]
       else: [t: "(", x: "*[1]", t: ")"]
 
@@ -392,7 +400,7 @@
 
 # Dedicon rule for sub- and superscripts: base "_" subscript, base "^" superscript, without spaces ("x_1", "5^2")
 # Structure follows the default script rule in ../ASCIIMath/ASCIIMath_Rules.yaml, with these Dedicon differences:
-# - A compound script that is already bracketed gets no extra parentheses: "[dy/dx]_(x = x_A)"
+# - A compound script that is already bracketed (by any pair of fences) gets no extra parentheses: "[dy/dx]_(x = x_A)"
 # - A simple script is written as is and ended with a (removable) space: "5^2 + 2", "a_mn * b_mn"
 #   Simple means: a single token, a negative token ("x^-1"),
 #   or tokens joined only by invisible times/separator ("a_mn", "a_11");
@@ -407,7 +415,7 @@
   match: "."
   replace:
   - test:
-      if: "*[1][self::m:msup or self::m:msubsup or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')))]"
+      if: "*[1][self::m:msup or self::m:msubsup or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '', '')))]"
       then: [t: "(", x: "*[1]", t: ")"]
       else: [x: "*[1]"]
   - test:
@@ -425,7 +433,7 @@
           then: [t: "𝐖"]    # end the script; cleanup removes it where not needed
       else:
       - test:
-          if: "*[2][IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')]"
+          if: "*[2][IsBracketed(., '', '')]"
           then: [x: "*[2]"]    # already bracketed
           else: [t: "(", x: "*[2]", t: ")"]
   - test:
@@ -437,7 +445,7 @@
           then: [x: "*[3]", t: "𝐖"]
           else:
           - test:
-              if: "*[3][IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')]"
+              if: "*[3][IsBracketed(., '', '')]"
               then: [x: "*[3]"]    # already bracketed
               else: [t: "(", x: "*[3]", t: ")"]
 
@@ -469,7 +477,7 @@
   match: "."
   replace:
   - test:
-      if: "*[1][self::m:msup or self::m:msubsup or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')))]"
+      if: "*[1][self::m:msup or self::m:msubsup or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '', '')))]"
       then: [t: "(", x: "*[1]", t: ")"]
       else: [x: "*[1]"]
   - test:
@@ -516,7 +524,7 @@
           - test:
             - if: "$Prescripts[1][IsNode(., 'leaf') or (self::m:mrow and count(*)=2 and *[1][self::m:mo and (.='-' or .='\u2212' or .='\u2013')] and *[2][IsNode(., 'leaf')]) or (self::m:mrow and not(*[not(IsNode(., 'leaf'))]) and not(m:mo[not(.='\u2062' or .='\u2063')]))]"
               then: [x: "$Prescripts[1]"]
-            - else_if: "$Prescripts[1][IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')]"
+            - else_if: "$Prescripts[1][IsBracketed(., '', '')]"
               then: [x: "$Prescripts[1]"]    # already bracketed
               else: [t: "(", x: "$Prescripts[1]", t: ")"]
       - test:
@@ -526,7 +534,7 @@
           - test:
             - if: "$Prescripts[2][IsNode(., 'leaf') or (self::m:mrow and count(*)=2 and *[1][self::m:mo and (.='-' or .='\u2212' or .='\u2013')] and *[2][IsNode(., 'leaf')]) or (self::m:mrow and not(*[not(IsNode(., 'leaf'))]) and not(m:mo[not(.='\u2062' or .='\u2063')]))]"
               then: [x: "$Prescripts[2]"]
-            - else_if: "$Prescripts[2][IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')]"
+            - else_if: "$Prescripts[2][IsBracketed(., '', '')]"
               then: [x: "$Prescripts[2]"]    # already bracketed
               else: [t: "(", x: "$Prescripts[2]", t: ")"]
       - test:
@@ -544,7 +552,7 @@
           - test:
             - if: "$Postscripts[1][IsNode(., 'leaf') or (self::m:mrow and count(*)=2 and *[1][self::m:mo and (.='-' or .='\u2212' or .='\u2013')] and *[2][IsNode(., 'leaf')]) or (self::m:mrow and not(*[not(IsNode(., 'leaf'))]) and not(m:mo[not(.='\u2062' or .='\u2063')]))]"
               then: [x: "$Postscripts[1]"]
-            - else_if: "$Postscripts[1][IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')]"
+            - else_if: "$Postscripts[1][IsBracketed(., '', '')]"
               then: [x: "$Postscripts[1]"]    # already bracketed
               else: [t: "(", x: "$Postscripts[1]", t: ")"]
       - test:
@@ -557,7 +565,7 @@
           - test:
             - if: "$Postscripts[2][IsNode(., 'leaf') or (self::m:mrow and count(*)=2 and *[1][self::m:mo and (.='-' or .='\u2212' or .='\u2013')] and *[2][IsNode(., 'leaf')]) or (self::m:mrow and not(*[not(IsNode(., 'leaf'))]) and not(m:mo[not(.='\u2062' or .='\u2063')]))]"
               then: [x: "$Postscripts[2]"]
-            - else_if: "$Postscripts[2][IsBracketed(., '(', ')') or IsBracketed(., '[', ']') or IsBracketed(., '{', '}') or IsBracketed(., '|', '|')]"
+            - else_if: "$Postscripts[2][IsBracketed(., '', '')]"
               then: [x: "$Postscripts[2]"]    # already bracketed
               else: [t: "(", x: "$Postscripts[2]", t: ")"]
       - test:
