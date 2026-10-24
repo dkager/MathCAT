@@ -1016,6 +1016,8 @@ mod machten {
     /// Voorbeeld 6: Macht van een negatief getal tussen haakjes, in een langere berekening.
     /// The minus sign before the fraction is separated from it by a space; the brackets of mfenced (without a
     /// separators attribute) get no commas next to the minus sign.
+    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
+    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-with-operator rule).
     #[test]
     fn voorbeeld_06() -> Result<()> {
         let expr = r#"<math display="inline"><mrow><mrow><mi>f</mi><mfenced open="(" close=")"><mo>-</mo><mn>8</mn></mfenced><mo>=</mo><mo>-</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>⋅</mo><msup><mfenced open="(" close=")"><mo>-</mo><mn>8</mn></mfenced><mn>2</mn></msup><mo>+</mo><mn>2</mn><mo>⋅</mo><mn>-8</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>-47</mn></mrow></mrow></math>"#;
@@ -1028,6 +1030,16 @@ mod machten {
     fn voorbeeld_07() -> Result<()> {
         let expr = r#"<math><msup><mrow><mo>(</mo><mrow><mn>2</mn><msqrt><mn>2</mn></msqrt></mrow><mo>)</mo></mrow><mn>2</mn></msup></math>"#;
         test_braille("Dedicon", expr, r#"(2sqrt(2))^2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 8: Macht van een product tussen haakjes (mfenced): geen komma's in het grondtal.
+    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
+    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-in-power-base rule).
+    #[test]
+    fn voorbeeld_08() -> Result<()> {
+        let expr = r#"<math><msup><mfenced open="(" close=")"><mn>2</mn><msqrt><mn>3</mn></msqrt></mfenced><mn>2</mn></msup></math>"#;
+        test_braille("Dedicon", expr, r#"(2sqrt(3))^2"#)?;
         return Ok(());
     }
 }
@@ -1168,6 +1180,65 @@ mod haakjes_en_leestekens {
     fn voorbeeld_06() -> Result<()> {
         let expr = r#"<math><mrow><mi>C</mi><mfenced open="(" close=")" separators=","><mn>0</mn><mrow><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></mfenced></mrow></math>"#;
         test_braille("Dedicon", expr, r#"C(0, 3 1/2)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 7: mfenced met separators="": geen komma's tussen de kinderen, ook niet tussen twee variabelen.
+    #[test]
+    fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><mfenced separators=""><mi>a</mi><mi>b</mi></mfenced></math>"#;
+        test_braille("Dedicon", expr, r#"(ab)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 8: mfenced zonder separators-attribuut, met een operator: geen komma's naast de operator.
+    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
+    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-with-operator rule).
+    #[test]
+    fn voorbeeld_08() -> Result<()> {
+        let expr = r#"<math><mfenced><mi>a</mi><mo>-</mo><mn>9</mn></mfenced></math>"#;
+        test_braille("Dedicon", expr, r#"(a - 9)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 9: mfenced zonder separators-attribuut, met een operator: ook geen komma tussen het getal en de variabele.
+    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
+    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-with-operator rule).
+    #[test]
+    fn voorbeeld_09() -> Result<()> {
+        let expr = r#"<math><mfenced><mn>2</mn><mi>a</mi><mo>+</mo><mn>5</mn></mfenced></math>"#;
+        test_braille("Dedicon", expr, r#"(2a + 5)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 10: mfenced zonder separators-attribuut, met een komma van de auteur: alleen die komma blijft.
+    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
+    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-with-operator rule).
+    #[test]
+    fn voorbeeld_10() -> Result<()> {
+        let expr = r#"<math><mi>S</mi><mfenced><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mn>-1</mn><mfrac><mn>1</mn><mn>4</mn></mfrac></mfenced></math>"#;
+        test_braille("Dedicon", expr, r#"S(3 1/2, -1 1/4)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 11: Functiewaarde van een gemengd getal, met mfenced zonder mrow om de inhoud.
+    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
+    /// are separated by commas), but it is used a lot in practice. Here there is no operator and no power, so the
+    /// mfenced rules keep the comma: "f(3, 1/2)". Without context this cannot be told apart from a function with two
+    /// arguments, so the test is ignored. The same expression with an mrow around the content is voorbeeld 12.
+    #[test]
+    #[ignore = "mfenced without an mrow around a mixed number: the default comma cannot be told apart from a list"]
+    fn voorbeeld_11() -> Result<()> {
+        let expr = r#"<math display="inline"><mrow><mi>f</mi><mfenced open="(" close=")"><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac></mfenced><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>⋅</mo><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>-</mo><mn>3</mn><mo>=</mo><mn>-1</mn><mfrac><mn>1</mn><mn>4</mn></mfrac></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"f(3 1/2) = 1/2 * 3 1/2 - 3 = -1 1/4"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 12: Als voorbeeld 11, met de inhoud van mfenced in een mrow, zoals de MathML-standaard het bedoelt.
+    #[test]
+    fn voorbeeld_12() -> Result<()> {
+        let expr = r#"<math display="inline"><mrow><mi>f</mi><mfenced open="(" close=")"><mrow><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></mfenced><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>⋅</mo><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>-</mo><mn>3</mn><mo>=</mo><mn>-1</mn><mfrac><mn>1</mn><mn>4</mn></mfrac></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"f(3 1/2) = 1/2 * 3 1/2 - 3 = -1 1/4"#)?;
         return Ok(());
     }
 }
