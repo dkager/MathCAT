@@ -73,10 +73,10 @@
 #   Dedicon_Rules.yaml); a function name keeps no space before an opening bracket (named-functions rule)
 # "|" is left out on purpose: it is both an opening and a closing bracket
 - OpeningBrackets: {
-    "(", "[", "{", "⟨",
+    "(", "[", "{",
   }
 - ClosingBrackets: {
-    ")", "]", "}", "⟩",
+    ")", "]", "}",
   }
 
 # Division signs written as "/" -- in principle without spaces
