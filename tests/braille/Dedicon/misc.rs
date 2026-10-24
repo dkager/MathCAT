@@ -240,6 +240,39 @@ mod samengestelde_constructies {
         test_braille("Dedicon", expr, r#"sin -x"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 22: Breuk in een breuk die al haakjes heeft in de teller (zoals voorbeeld 16): geen extra haakjes.
+    #[test]
+    fn voorbeeld_22() -> Result<()> {
+        let expr = r#"<math display="inline"><mrow><mfrac><mrow><mfenced open="(" close=")"><mfrac><mn>3</mn><mi>x</mi></mfrac></mfenced></mrow><mn>5</mn></mfrac><mo>=</mo><mfrac><mn>1</mn><mn>5</mn></mfrac><mo>⋅</mo><mfrac><mn>3</mn><mi>x</mi></mfrac><mo>=</mo><mfrac><mn>3</mn><mrow><mn>5</mn><mi>x</mi></mrow></mfrac></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"(3/x)/5 = 1/5 * 3/x = 3/(5x)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 23: Breuk in een breuk die al haakjes heeft in de noemer: geen extra haakjes.
+    #[test]
+    fn voorbeeld_23() -> Result<()> {
+        let expr = r#"<math display="inline"><mrow><mfrac><mn>8</mn><mrow><mfenced open="(" close=")"><mrow><mfrac><mn>3</mn><mi>a</mi></mfrac></mrow></mfenced></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>8</mn><mo>⋅</mo><mi>a</mi></mrow><mrow><mfrac><mn>3</mn><mi>a</mi></mfrac><mo>⋅</mo><mi>a</mi></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>8</mn><mi>a</mi></mrow><mn>3</mn></mfrac><mo>=</mo><mfrac><mn>8</mn><mn>3</mn></mfrac><mi>a</mi><mo>=</mo><mn>2</mn><mfrac><mn>2</mn><mn>3</mn></mfrac><mi>a</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"8/(3/a) = (8 * a)/(3/a * a) = (8a)/3 = 8/3 a = 2 2/3 a"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 24: Breuk met haakjes in de teller, waarvan de teller zelf haakjes krijgt: alleen die haakjes.
+    #[test]
+    fn voorbeeld_24() -> Result<()> {
+        let expr = r#"<math display="inline"><mrow><mfrac><mrow><mfenced open="(" close=")"><mfrac><mrow><mn>2</mn><mi>x</mi></mrow><mn>5</mn></mfrac></mfenced></mrow><mn>3</mn></mfrac><mo>=</mo><mfrac><mrow><mfrac><mrow><mn>2</mn><mi>x</mi></mrow><mn>5</mn></mfrac><mo>⋅</mo><mn>5</mn></mrow><mrow><mn>3</mn><mo>⋅</mo><mn>5</mn></mrow></mfrac><mo>=</mo><mfrac><mrow><mn>2</mn><mi>x</mi></mrow><mrow><mn>15</mn></mrow></mfrac><mo>=</mo><mfrac><mn>2</mn><mrow><mn>15</mn></mrow></mfrac><mi>x</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"((2x)/5)/3 = ((2x)/5 * 5)/(3 * 5) = (2x)/15 = 2/15 x"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 25: Breuken met haakjes in teller en noemer: geen extra haakjes; producten tussen haakjes in een
+    /// teller of noemer krijgen ze wel.
+    #[test]
+    fn voorbeeld_25() -> Result<()> {
+        let expr = r#"<math display="inline"><mrow><mfrac><mrow><mfenced open="(" close=")"><mfrac><mi>n</mi><mrow><mi>n</mi><mo>-</mo><mn>2</mn></mrow></mfrac></mfenced></mrow><mrow><mfenced open="(" close=")"><mfrac><mn>1</mn><mrow><mi>n</mi><mo>+</mo><mn>2</mn></mrow></mfrac></mfenced></mrow></mfrac><mo>-</mo><mi>n</mi><mo>=</mo><mfrac><mrow><mfrac><mi>n</mi><mrow><mi>n</mi><mo>-</mo><mn>2</mn></mrow></mfrac><mo>⋅</mo><mfenced open="(" close=")"><mrow><mi>n</mi><mo>-</mo><mn>2</mn></mrow></mfenced><mfenced open="(" close=")"><mrow><mi>n</mi><mo>+</mo><mn>2</mn></mrow></mfenced></mrow><mrow><mfrac><mn>1</mn><mrow><mi>n</mi><mo>+</mo><mn>2</mn></mrow></mfrac><mo>⋅</mo><mfenced open="(" close=")"><mrow><mi>n</mi><mo>-</mo><mn>2</mn></mrow></mfenced><mfenced open="(" close=")"><mrow><mi>n</mi><mo>+</mo><mn>2</mn></mrow></mfenced></mrow></mfrac><mo>-</mo><mi>n</mi><mo>=</mo><mfrac><mrow><mi>n</mi><mfenced open="(" close=")"><mrow><mi>n</mi><mo>+</mo><mn>2</mn></mrow></mfenced></mrow><mrow><mi>n</mi><mo>-</mo><mn>2</mn></mrow></mfrac><mo>-</mo><mfrac><mrow><mi>n</mi><mfenced open="(" close=")"><mrow><mi>n</mi><mo>-</mo><mn>2</mn></mrow></mfenced></mrow><mrow><mi>n</mi><mo>-</mo><mn>2</mn></mrow></mfrac><mo>=</mo><mfrac><mrow><mi>n</mi><mfenced open="(" close=")"><mrow><mi>n</mi><mo>+</mo><mn>2</mn></mrow></mfenced><mo>-</mo><mi>n</mi><mfenced open="(" close=")"><mrow><mi>n</mi><mo>-</mo><mn>2</mn></mrow></mfenced></mrow><mrow><mi>n</mi><mo>-</mo><mn>2</mn></mrow></mfrac></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"(n/(n - 2))/(1/(n + 2)) - n = (n/(n - 2) * (n - 2)(n + 2))/(1/(n + 2) * (n - 2)(n + 2)) - n = (n(n + 2))/(n - 2) - (n(n - 2))/(n - 2) = (n(n + 2) - n(n - 2))/(n - 2)"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: logica

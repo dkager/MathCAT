@@ -65,7 +65,8 @@
 #   "d/dq (dK/dq)", "1/2 (x - 6)^2", "1 1/5 (x - 1)" (with the mixed number in a row of its own).
 #   The bracket may be in a row around the fraction, if the fraction is the last part of those rows;
 #   inside a script, root, etc. the other children are not neighbours ("sqrt(1/2)(x)")
-# - Only the part that needs parentheses gets them: "(-5 + 3)/11", "21/(3sqrt(2))", "(4 + 2)/(4 - 2)"
+# - Only the part that needs parentheses gets them: "(-5 + 3)/11", "21/(3sqrt(2))", "(4 + 2)/(4 - 2)";
+#   a part that is already bracketed (by any pair of fences, as for scripts) gets no extra ones: "(3/x)/5", "8/(3/a)"
 # - Simple parts need no parentheses: a variable, a number, a negative number or variable ("-5/11"),
 #   a root (it has its own parentheses: "7/sqrt(6)", "7/root_3(6)"), a sub- or superscript,
 #   or a derivative part like "dx" ("dy/dx")
@@ -90,12 +91,12 @@
     - if: "not($SimpleNumerator) or not($SimpleDenominator)"
       then:
       - test:
-          if: "$SimpleNumerator"
+          if: "$SimpleNumerator or *[1][self::m:mrow and IsBracketed(., '', '')]"
           then: [x: "*[1]"]
           else: [t: "(", x: "*[1]", t: ")"]
       - t: "/"
       - test:
-          if: "$SimpleDenominator"
+          if: "$SimpleDenominator or *[2][self::m:mrow and IsBracketed(., '', '')]"
           then: [x: "*[2]"]
           else: [t: "(", x: "*[2]", t: ")"]
     - else_if: "*[self::m:msub or self::m:msup or self::m:msubsup]"
