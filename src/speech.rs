@@ -1403,23 +1403,6 @@ impl SpeechPattern  {
 
         return Ok(None);
     }
-
-    fn is_match(&self, context: &sxd_xpath_no_unsafe::Context, mathml: Element) -> Result<bool> {
-        if self.tag_name != as_qname!(mathml.name()).local_part() && self.tag_name != "*" && self.tag_name != "!*" {
-            return Ok( false );
-        }
-
-        // debug!("\nis_match: pattern='{}'", self.pattern_name);
-        // debug!("    pattern_expr {:?}", self.pattern);
-        // debug!("is_match: mathml is\n{}", mml_to_string(mathml));
-        return Ok(
-            match self.pattern.evaluate(context, mathml)? {
-                Value::Boolean(b)       => b,
-                Value::Nodeset(nodes) => nodes.size() > 0,
-                _                             => false,
-            }
-        );
-    }
 }
 
 
@@ -2305,7 +2288,7 @@ impl SpeechRules {
             self.unicode_short_files.borrow_mut().set_files_and_times(self.read_unicode(None, true)?);
         }
 
-        if self.definitions_files.borrow().ft.is_empty() || !self.definitions_files.borrow().is_file_up_to_date(
+        if !self.definitions_files.borrow().is_file_up_to_date(
                             pref_manager.get_definitions_file(self.name != RulesFor::Braille),
                             should_ignore_file_time
         ) {
@@ -2487,12 +2470,12 @@ impl<'c, 's:'c, 'r, 'm:'c> SpeechRulesWithContext<'c, 's,'m> {
     fn find_match<T:TreeOrString<'c, 'm, T>>(&'r mut self, rule_vector: &[Box<SpeechPattern>], mathml: Element<'c>) -> Result<Option<T>> {
         for pattern in rule_vector {
             // debug!("Pattern name: {}", pattern.pattern_name);
-            // always pushing and popping around the is_match would be a little cleaner, but push/pop is relatively expensive,
+            // always pushing and popping around the match test would be a little cleaner, but push/pop is relatively expensive,
             //   so we optimize and only push first if the variables are needed to do the match
             if pattern.match_uses_var_defs {
                 self.context_stack.push(pattern.var_defs.clone(), mathml)?;
             }
-            if pattern.is_match(&self.context_stack.base, mathml)
+            if pattern.pattern.is_true(&self.context_stack.base, mathml)
                     .with_context(|| error_string(pattern, mathml) )? {
                 // debug!("  find_match: FOUND!!!");
                 if !pattern.match_uses_var_defs && pattern.var_defs.len() > 0 { // don't push them on twice
@@ -2855,9 +2838,8 @@ impl<'c, 's:'c, 'r, 'm:'c> SpeechRulesWithContext<'c, 's,'m> {
         }
         self.translate_count = 0;     // not in loop
         // debug!("*** Did not find unicode {} for char '{}'/{:#06x}", rules.name, ch, ch_as_u32);
-        if rules.translate_single_chars_only || ch.is_ascii() {  // speech or if braille, avoid loop (ASCII remains ASCII if not found)
-            return Ok(self.escape_string_for_safety(String::from(ch)));
-        } else if ('\u{2800}'..='\u{28ff}').contains(&ch) {   // braille -- leave as braille
+        if rules.translate_single_chars_only || ch.is_ascii() ||  // speech or if braille, avoid loop (ASCII remains ASCII if not found)
+           ('\u{2800}'..='\u{28ff}').contains(&ch) {             // braille -- leave as braille
             return Ok(self.escape_string_for_safety(String::from(ch)));
         } else {                                    // Emulate what NVDA does: generate (including single quotes) '\xhhhh' or '\yhhhhhh'
             let prefix_indicator = if ch_as_u32 < 1<<16 {'x'} else {'y'};
