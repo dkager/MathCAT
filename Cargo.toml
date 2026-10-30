@@ -1,6 +1,6 @@
 [package]
 name = "mathcat"
-version = "0.7.8-alpha"
+version = "0.7.8-alpha.1"
 authors = ["Neil Soiffer <soiffer@alum.mit.edu>"]
 license = "MIT"
 description = "MathCAT: Math Capable Assistive Technology ('Speech and braille from MathML')"
@@ -16,7 +16,6 @@ default = ["rules-all"]
 "rule-coverage" = ["dep:serde_json"]
 "include-zip" = []
 "enable-logs" = ["android_logger"]
-"tts" = [ "natural-tts" ]
 "no-unsafe" = ["sxd-document-no-unsafe/no-unsafe", "sxd-xpath-no-unsafe/no-unsafe"]
 
 # Which Rules/Languages and Rules/Braille directories `include-zip` embeds. Every one is on by default.
@@ -28,7 +27,7 @@ default = ["rules-all"]
 # notations does so through the braille API, so it needs `braille-asciimath` / `braille-latex`.
 # These only change what is embedded: without `include-zip`, the Rules directory is read from disk.
 rules-all = ["lang-all", "braille-all"]
-lang-all = ["lang-de", "lang-el", "lang-en", "lang-es", "lang-fi", "lang-fr", "lang-hu", "lang-id", "lang-nb", "lang-pl", "lang-pt", "lang-ru", "lang-sv", "lang-vi", "lang-zh"]
+lang-all = ["lang-de", "lang-el", "lang-en", "lang-es", "lang-fi", "lang-fr", "lang-hu", "lang-id", "lang-ja", "lang-nb", "lang-pl", "lang-pt", "lang-ru", "lang-sv", "lang-vi", "lang-zh"]
 braille-all = ["braille-asciimath", "braille-cmu", "braille-dedicon", "braille-french", "braille-latex", "braille-nemeth", "braille-russian", "braille-swedish", "braille-ueb", "braille-vietnam"]
 lang-de = []
 lang-el = []
@@ -38,6 +37,7 @@ lang-fi = []
 lang-fr = []
 lang-hu = []
 lang-id = []
+lang-ja = []
 lang-nb = []
 lang-pl = []
 lang-pt = []
@@ -87,7 +87,6 @@ elements_rs = { version = "0.2.8", default-features = false }
 zip = { version = "9.0", default-features = false, features = ["deflate", "bzip2"] }
 
 android_logger = {version = "0.15.1", optional = true}
-natural-tts = { version = "0.3.1", optional = true }
 
 [build-dependencies]
 bitflags = "2.6"
