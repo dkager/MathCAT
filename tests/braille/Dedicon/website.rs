@@ -100,16 +100,6 @@ mod breuken {
         test_braille("Dedicon", expr, r#"sqrt(5 + 4)/(6 * 3)"#)?;
         return Ok(());
     }
-
-    /// Voorbeeld 12: Een breuk met een macht, zonder of met haken.
-    /// NOTE: the website lists two alternatives ("a^p / q of (a^p)/(q)") as one linear notation;
-    /// the expected output is the first alternative.
-    #[test]
-    fn voorbeeld_12() -> Result<()> {
-        let expr = r#"<math><mfrac><msup><mi>a</mi> <mi>p</mi> </msup><mi>q</mi></mfrac></math>"#;
-        test_braille("Dedicon", expr, r#"a^p / q"#)?;
-        return Ok(());
-    }
 }
 
 // Dedicon examples: complexe getallen
@@ -514,6 +504,8 @@ mod machtsverheffen {
     }
 
     /// Voorbeeld 10: Een breuk met in de teller a tot de macht p.
+    /// NOTE: the website lists two alternatives ("a^p / q" and "(a^p)/(q)") as one linear notation;
+    /// the expected output is the first alternative.
     #[test]
     fn voorbeeld_10() -> Result<()> {
         let expr = r#"<math><mfrac><msup><mi>a</mi> <mi>p</mi> </msup><mi>q</mi></mfrac></math>"#;
