@@ -1046,14 +1046,11 @@ mod machten {
         return Ok(());
     }
 
-    /// Voorbeeld 6: Macht van een negatief getal tussen haakjes, in een langere berekening.
-    /// The minus sign before the fraction is separated from it by a space; the brackets of mfenced (without a
-    /// separators attribute) get no commas next to the minus sign.
-    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
-    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-with-operator rule).
+    /// Voorbeeld 6: Macht van een negatief getal tussen haakjes, in een langere berekening. Het minteken voor de breuk
+    /// krijgt een spatie; mfenced met separators="" krijgt geen komma's naast het minteken.
     #[test]
     fn voorbeeld_06() -> Result<()> {
-        let expr = r#"<math display="inline"><mrow><mrow><mi>f</mi><mfenced open="(" close=")"><mo>-</mo><mn>8</mn></mfenced><mo>=</mo><mo>-</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>⋅</mo><msup><mfenced open="(" close=")"><mo>-</mo><mn>8</mn></mfenced><mn>2</mn></msup><mo>+</mo><mn>2</mn><mo>⋅</mo><mn>-8</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>-47</mn></mrow></mrow></math>"#;
+        let expr = r#"<math display="inline"><mrow><mrow><mi>f</mi><mfenced open="(" close=")" separators=""><mo>-</mo><mn>8</mn></mfenced><mo>=</mo><mo>-</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>⋅</mo><msup><mfenced open="(" close=")" separators=""><mo>-</mo><mn>8</mn></mfenced><mn>2</mn></msup><mo>+</mo><mn>2</mn><mo>⋅</mo><mn>-8</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>-47</mn></mrow></mrow></math>"#;
         test_braille("Dedicon", expr, r#"f(-8) = - 1/2 * (-8)^2 + 2 * -8 + 1 = -47"#)?;
         return Ok(());
     }
@@ -1066,12 +1063,10 @@ mod machten {
         return Ok(());
     }
 
-    /// Voorbeeld 8: Macht van een product tussen haakjes (mfenced): geen komma's in het grondtal.
-    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
-    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-in-power-base rule).
+    /// Voorbeeld 8: Macht van een product tussen haakjes (mfenced met separators=""): geen komma's in het grondtal.
     #[test]
     fn voorbeeld_08() -> Result<()> {
-        let expr = r#"<math><msup><mfenced open="(" close=")"><mn>2</mn><msqrt><mn>3</mn></msqrt></mfenced><mn>2</mn></msup></math>"#;
+        let expr = r#"<math><msup><mfenced open="(" close=")" separators=""><mn>2</mn><msqrt><mn>3</mn></msqrt></mfenced><mn>2</mn></msup></math>"#;
         test_braille("Dedicon", expr, r#"(2sqrt(3))^2"#)?;
         return Ok(());
     }
@@ -1224,32 +1219,26 @@ mod haakjes_en_leestekens {
         return Ok(());
     }
 
-    /// Voorbeeld 8: mfenced zonder separators-attribuut, met een operator: geen komma's naast de operator.
-    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
-    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-with-operator rule).
+    /// Voorbeeld 8: mfenced met separators="" en een operator: geen komma's naast de operator.
     #[test]
     fn voorbeeld_08() -> Result<()> {
-        let expr = r#"<math><mfenced><mi>a</mi><mo>-</mo><mn>9</mn></mfenced></math>"#;
+        let expr = r#"<math><mfenced separators=""><mi>a</mi><mo>-</mo><mn>9</mn></mfenced></math>"#;
         test_braille("Dedicon", expr, r#"(a - 9)"#)?;
         return Ok(());
     }
 
-    /// Voorbeeld 9: mfenced zonder separators-attribuut, met een operator: ook geen komma tussen het getal en de variabele.
-    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
-    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-with-operator rule).
+    /// Voorbeeld 9: mfenced met separators="" en een operator: ook geen komma tussen het getal en de variabele.
     #[test]
     fn voorbeeld_09() -> Result<()> {
-        let expr = r#"<math><mfenced><mn>2</mn><mi>a</mi><mo>+</mo><mn>5</mn></mfenced></math>"#;
+        let expr = r#"<math><mfenced separators=""><mn>2</mn><mi>a</mi><mo>+</mo><mn>5</mn></mfenced></math>"#;
         test_braille("Dedicon", expr, r#"(2a + 5)"#)?;
         return Ok(());
     }
 
-    /// Voorbeeld 10: mfenced zonder separators-attribuut, met een komma van de auteur: alleen die komma blijft.
-    /// NOTE: this MathML is wrong according to the MathML standard (without separators="" the children of mfenced
-    /// are separated by commas), but it is used a lot in practice (see the mfenced-separator-with-operator rule).
+    /// Voorbeeld 10: mfenced met separators="" en een komma van de auteur: alleen die komma blijft.
     #[test]
     fn voorbeeld_10() -> Result<()> {
-        let expr = r#"<math><mi>S</mi><mfenced><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mn>-1</mn><mfrac><mn>1</mn><mn>4</mn></mfrac></mfenced></math>"#;
+        let expr = r#"<math><mi>S</mi><mfenced separators=""><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>,</mo><mn>-1</mn><mfrac><mn>1</mn><mn>4</mn></mfrac></mfenced></math>"#;
         test_braille("Dedicon", expr, r#"S(3 1/2, -1 1/4)"#)?;
         return Ok(());
     }
@@ -1272,6 +1261,23 @@ mod haakjes_en_leestekens {
     fn voorbeeld_12() -> Result<()> {
         let expr = r#"<math display="inline"><mrow><mi>f</mi><mfenced open="(" close=")"><mrow><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></mfenced><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>⋅</mo><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>-</mo><mn>3</mn><mo>=</mo><mn>-1</mn><mfrac><mn>1</mn><mn>4</mn></mfrac></mrow></math>"#;
         test_braille("Dedicon", expr, r#"f(3 1/2) = 1/2 * 3 1/2 - 3 = -1 1/4"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 13: Als voorbeeld 10, zonder separators-attribuut en zonder de komma van de auteur: volgens de
+    /// MathML-standaard komt er een komma tussen alle kinderen van mfenced.
+    #[test]
+    fn voorbeeld_13() -> Result<()> {
+        let expr = r#"<math><mi>S</mi><mfenced><mn>3</mn><mfrac><mn>1</mn><mn>2</mn></mfrac><mn>-1</mn><mfrac><mn>1</mn><mn>4</mn></mfrac></mfenced></math>"#;
+        test_braille("Dedicon", expr, r#"S(3, 1/2, -1, 1/4)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 14: Als voorbeeld 10, met een mrow om elk gemengd getal: de komma van mfenced scheidt de twee getallen.
+    #[test]
+    fn voorbeeld_14() -> Result<()> {
+        let expr = r#"<math> <mi>S</mi> <mfenced> <mrow> <mn>3</mn> <mfrac> <mn>1</mn> <mn>2</mn> </mfrac> </mrow> <mrow> <mn>-1</mn> <mfrac> <mn>1</mn> <mn>4</mn> </mfrac> </mrow> </mfenced> </math>"#;
+        test_braille("Dedicon", expr, r#"S(3 1/2, -1 1/4)"#)?;
         return Ok(());
     }
 }
@@ -1298,10 +1304,11 @@ mod relatietekens {
     }
 
     /// Voorbeeld 3: Komt overeen met.
-    /// NOTE: no space between a number and a unit, as on the Dedicon website (machtsverheffen: "50cm^2", "10m^3"). This
-    /// differs from the degree sign, which does get a space ("-14 grC", "30 gr"). Suggestion: mark units in the MathML,
-    /// as <mtext> or with attributes on <mi> (mathvariant="normal", class="MathML-unit" or intent=":unit"), so that the
-    /// rules can recognize them.
+    /// NOTE: "1 cm" gets a space because the unit is an <mtext>. "200N" gets none: there is no space between a number
+    /// and a unit written as <mi>, as on the Dedicon website (machtsverheffen: "50cm^2", "10m^3"). This differs from
+    /// the degree sign, which does get a space ("-14 grC", "30 gr"). Suggestion: mark units in the MathML, as <mtext>
+    /// or with attributes on <mi> (mathvariant="normal", class="MathML-unit" or intent=":unit"), so that the rules can
+    /// recognize them.
     #[test]
     fn voorbeeld_03() -> Result<()> {
         let expr = r#"<math><mrow><mn>1</mn><mtext>cm</mtext><mo>≙</mo><mn>200</mn><mi>N</mi></mrow></math>"#;

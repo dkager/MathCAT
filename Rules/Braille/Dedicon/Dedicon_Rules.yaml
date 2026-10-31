@@ -174,39 +174,6 @@
   match: "."
   replace: [x: "*"]
 
-# Dedicon rule for mfenced without an mrow around its content, as many authors and converters write it:
-#   <mfenced open="(" close=")"><mi>a</mi><mo>-</mo><mn>9</mn></mfenced>
-#   Without a separators attribute the default separator is a comma (MathML 3, section 3.3.8.2), so MathCAT
-#   correctly inserts a comma between every pair of children: "(a, -, 9)". The author meant "(a - 9)".
-#   The inserted commas are marked with data-changed='from_mfenced'. If one of the children is an operator (mo),
-#   the content is one expression and not a list, so this rule leaves out all inserted commas: "(2a + 5)", "(3 + 2p)".
-#   An author writes a list item with an operator in an mrow of its own ("f(x + 1, y)"), so that is not affected.
-#   A comma that the author wrote (<mo>,</mo>) is not an inserted comma and stays.
-#   Ellipses do not count as operators, as they are part of lists: "{1, 2, ..., n}".
-#   Without an operator the inserted commas are kept, as in "f(x, y, z)" and "{1, 2, 3}".
-#   With separators="" MathCAT inserts no separators at all, so this rule is not needed there: "(ab)".
-#   (see tests/braille/Dedicon/misc.rs, haakjes_en_leestekens::voorbeeld_07 to voorbeeld_10)
--
-  name: mfenced-separator-with-operator
-  tag: mo
-  match: "@data-changed='from_mfenced' and .=',' and
-          ../m:mo[not(@data-changed='from_mfenced') and not(.='\u2026' or .='\u22EF' or .='...')]"
-  replace: []
-
-# Dedicon rule for mfenced without an mrow around its content as the base of a power: "(2sqrt(3))^2", "(3x)^2", "(12 1/2)^2"
-#   As in the rule above, MathCAT correctly inserts the default comma between the children ("(2, sqrt(3))^2"),
-#   but here they are only operands, so the rule above does not apply. A list such as a coordinate is not raised
-#   to a power, so in the base of a power (msup, msubsup) every inserted comma is left out.
-#   msub does not count: a list can have a subscript, such as a vector "(a, b)_1".
-#   The base is the mrow with the brackets of the mfenced (its first child is an inserted bracket).
--
-  name: mfenced-separator-in-power-base
-  tag: mo
-  match: "@data-changed='from_mfenced' and .=',' and
-          ancestor::m:mrow[*[1][self::m:mo and @data-changed='from_mfenced']][1]
-            [not(preceding-sibling::*) and (parent::m:msup or parent::m:msubsup)]"
-  replace: []
-
 # Dedicon rules for operators:
 # - AlwaysSpacing operators ("=") always get a space before and after them
 # - AddSpacing operators get a space before and after them

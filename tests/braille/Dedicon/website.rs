@@ -259,7 +259,7 @@ mod limieten {
     use crate::common::*;
     use anyhow::Result;
 
-    /// Voorbeeld 1: Limiet van n naar oneindig
+    /// Voorbeeld 1: Limiet van n naar oneindig.
     #[test]
     fn voorbeeld_01() -> Result<()> {
         let expr = r#"<math><munder><mo>lim</mo> <mrow><mi>n</mi> <mo>→</mo> <mi>∞</mi> </mrow></munder><msub><mi>u</mi> <mi>n</mi></msub></math>"#;
@@ -376,7 +376,7 @@ mod logaritmen {
         return Ok(());
     }
 
-    /// Voorbeeld 8: Logaritme met grontal als exponent van een macht.
+    /// Voorbeeld 8: Logaritme met grondtal als exponent van een macht.
     #[test]
     fn voorbeeld_08() -> Result<()> {
         let expr = r#"<math><msup><mn>10</mn> <mrow><mmultiscripts><mi>log</mi> <mprescripts></mprescripts><none></none><mn>10</mn> </mmultiscripts><mi>x</mi></mrow></msup><mo>=</mo> <mi>x</mi></math>"#;
@@ -394,7 +394,7 @@ mod logica {
     use crate::common::*;
     use anyhow::Result;
 
-    /// Voorbeeld 1: Distributiviteit
+    /// Voorbeeld 1: Distributiviteit.
     #[test]
     fn voorbeeld_01() -> Result<()> {
         let expr = r#"<math><mi>P</mi> <mo>∨</mo> <mrow><mo>(</mo> <mi>Q</mi><mo>∧</mo><mi>R</mi> <mo>)</mo></mrow> <mo>=</mo> <mrow><mo>(</mo> <mi>P</mi><mo>∨</mo><mi>Q</mi> <mo>)</mo></mrow> <mo>∧</mo> <mrow><mo>(</mo> <mi>P</mi><mo>∨</mo><mi>R</mi> <mo>)</mo></mrow></math>"#;
@@ -402,7 +402,7 @@ mod logica {
         return Ok(());
     }
 
-    /// Voorbeeld 2: Eén van de regels van De Morgan
+    /// Voorbeeld 2: Eén van de regels van De Morgan.
     #[test]
     fn voorbeeld_02() -> Result<()> {
         let expr = r#"<math><mrow><mo>¬</mo><mi>P</mi></mrow> <mo>∧</mo> <mrow><mo>¬</mo><mi>Q</mi></mrow> <mo>=</mo> <mo>¬</mo> <mrow><mo>(</mo> <mi>P</mi><mo>∨</mo><mi>Q</mi> <mo>)</mo></mrow></math>"#;
@@ -410,7 +410,7 @@ mod logica {
         return Ok(());
     }
 
-    /// Voorbeeld 3: Implicatie
+    /// Voorbeeld 3: Implicatie.
     #[test]
     fn voorbeeld_03() -> Result<()> {
         let expr = r#"<math><mi>P</mi><mo>→</mo><mi>Q</mi> <mo>=</mo> <mrow><mo>¬</mo><mi>P</mi></mrow> <mo>∨</mo> <mi>Q</mi></math>"#;
@@ -418,7 +418,7 @@ mod logica {
         return Ok(());
     }
 
-    /// Voorbeeld 4: Equivalentie
+    /// Voorbeeld 4: Equivalentie.
     #[test]
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><mi>P</mi><mo>↔</mo><mi>Q</mi> <mo>=</mo> <mrow><mo>(</mo> <mrow><mo>¬</mo><mi>P</mi></mrow> <mo>∧</mo> <mrow><mo>¬</mo><mi>Q</mi></mrow> <mo>)</mo></mrow> <mo>∨</mo> <mrow><mo>(</mo> <mi>P</mi><mo>∧</mo><mi>Q</mi> <mo>)</mo></mrow></math>"#;
@@ -426,7 +426,7 @@ mod logica {
         return Ok(());
     }
 
-    /// Voorbeeld 5: Eenvoudige onderindex
+    /// Voorbeeld 5: Existentiële en universele kwantor.
     #[test]
     fn voorbeeld_05() -> Result<()> {
         let expr = r#"<math><mo>∃</mo><mi>x</mi> <mrow><mo>(</mo> <mrow><mi>A</mi><mi>x</mi></mrow> <mo>∨</mo> <mo>∀</mo><mi>y</mi> <mrow><mi>B</mi><mi>x</mi><mi>y</mi></mrow> <mo>)</mo></mrow></math>"#;
@@ -814,7 +814,7 @@ mod verzamelingen {
     use crate::common::*;
     use anyhow::Result;
 
-    /// Voorbeeld 1: Distributiviteit
+    /// Voorbeeld 1: Distributiviteit.
     #[test]
     fn voorbeeld_01() -> Result<()> {
         let expr = r#"<math><mi>A</mi><mo>∪</mo> <mrow><mo>(</mo> <mi>B</mi><mo>∩</mo><mi>C</mi> <mo>)</mo></mrow> <mo>=</mo> <mrow><mo>(</mo> <mi>A</mi><mo>∪</mo><mi>B</mi> <mo>)</mo></mrow> <mo>∩</mo> <mrow><mo>(</mo> <mi>A</mi><mo>∪</mo><mi>C</mi> <mo>)</mo></mrow></math>"#;
@@ -822,7 +822,7 @@ mod verzamelingen {
         return Ok(());
     }
 
-    /// Voorbeeld 2: Eén van de regels van De Morgan
+    /// Voorbeeld 2: Eén van de regels van De Morgan.
     #[test]
     fn voorbeeld_02() -> Result<()> {
         let expr = r#"<math><msup><mi>A</mi><mi>c</mi> </msup><mo>∩</mo> <msup><mi>B</mi><mi>c</mi> </msup><mo>=</mo> <msup><mrow><mo>(</mo> <mi>A</mi><mo>∪</mo><mi>B</mi> <mo>)</mo></mrow> <mi>c</mi></msup></math>"#;
@@ -830,7 +830,7 @@ mod verzamelingen {
         return Ok(());
     }
 
-    /// Voorbeeld 3: Doorsnede
+    /// Voorbeeld 3: Doorsnede.
     #[test]
     fn voorbeeld_03() -> Result<()> {
         let expr = r#"<math><mfenced open="{" close="}"><mn>1</mn><mn>2</mn> </mfenced><mo>∩</mo> <mfenced open="{" close="}"><mn>2</mn><mn>3</mn> </mfenced><mo>=</mo> <mfenced open="{" close="}"><mn>2</mn></mfenced></math>"#;
@@ -838,7 +838,7 @@ mod verzamelingen {
         return Ok(());
     }
 
-    /// Voorbeeld 4: Vereniging
+    /// Voorbeeld 4: Vereniging.
     #[test]
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><mfenced open="{" close="}"><mn>1</mn><mn>2</mn> </mfenced><mo>∪</mo> <mfenced open="{" close="}"><mn>2</mn><mn>3</mn> </mfenced><mo>=</mo> <mfenced open="{" close="}"><mn>1</mn><mn>2</mn><mn>3</mn></mfenced></math>"#;
@@ -846,7 +846,7 @@ mod verzamelingen {
         return Ok(());
     }
 
-    /// Voorbeeld 5: Lege verzameling
+    /// Voorbeeld 5: Lege verzameling.
     #[test]
     fn voorbeeld_05() -> Result<()> {
         let expr = r#"<math><mfenced open="{" close="}"><mn>1</mn><mn>2</mn><mn>3</mn> </mfenced><mo>∩</mo> <mfenced open="{" close="}"><mn>4</mn> </mfenced><mo>=</mo> <mi>∅</mi></math>"#;
@@ -854,7 +854,7 @@ mod verzamelingen {
         return Ok(());
     }
 
-    /// Voorbeeld 6: Deelverzameling
+    /// Voorbeeld 6: Deelverzameling.
     #[test]
     fn voorbeeld_06() -> Result<()> {
         let expr = r#"<math><mfenced open="{" close="}"><mn>2</mn> </mfenced><mo>⊂</mo> <mfenced open="{" close="}"><mn>1</mn><mn>2</mn><mn>3</mn></mfenced></math>"#;
@@ -862,7 +862,7 @@ mod verzamelingen {
         return Ok(());
     }
 
-    /// Voorbeeld 7: Deelverzameling of gelijk aan
+    /// Voorbeeld 7: Deelverzameling of gelijk aan.
     #[test]
     fn voorbeeld_07() -> Result<()> {
         let expr = r#"<math><mfenced open="{" close="}"><mn>2</mn> </mfenced><mo>⊆</mo> <mfenced open="{" close="}"><mn>1</mn><mn>2</mn><mn>3</mn></mfenced></math>"#;
@@ -870,7 +870,7 @@ mod verzamelingen {
         return Ok(());
     }
 
-    /// Voorbeeld 8: Geen deelverzameling
+    /// Voorbeeld 8: Geen deelverzameling.
     #[test]
     fn voorbeeld_08() -> Result<()> {
         let expr = r#"<math><mfenced open="{" close="}"><mn>4</mn> </mfenced><mo>⊄</mo> <mfenced open="{" close="}"><mn>1</mn><mn>2</mn><mn>3</mn></mfenced></math>"#;
@@ -878,7 +878,7 @@ mod verzamelingen {
         return Ok(());
     }
 
-    /// Voorbeeld 9: Een element van de gehele getallen
+    /// Voorbeeld 9: Een element van de gehele getallen.
     #[test]
     fn voorbeeld_09() -> Result<()> {
         let expr = r#"<math><mn>2</mn><mo>∈</mo><mi>ℤ</mi></math>"#;
@@ -886,7 +886,7 @@ mod verzamelingen {
         return Ok(());
     }
 
-    /// Voorbeeld 10: Geen element van de natuurlijke getallen
+    /// Voorbeeld 10: Geen element van de natuurlijke getallen.
     /// NOTE: the linear notation on the website has "-2", but its MathML has "2" (2 is a natural number,
     /// so -2 is probably meant); the expected output follows the MathML used here.
     #[test]
