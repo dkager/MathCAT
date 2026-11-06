@@ -1156,6 +1156,16 @@ mod gradenteken {
         test_braille("Dedicon", expr, r#"30 gr"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 5: Hoek in graden tussen haakjes, na een weggelaten linkerlid.
+    /// NOTE: "=" always gets a space on both sides, also directly after an opening bracket. To discuss with Dedicon:
+    /// should this be "( = 90 gr)" or "(= 90 gr)"?
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><mfenced open="(" close=")" separators=""><mo>=</mo><mn>90</mn><mo>°</mo></mfenced></math>"#;
+        test_braille("Dedicon", expr, r#"( = 90 gr)"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: haakjes en leestekens
