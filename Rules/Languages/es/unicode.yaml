@@ -101,9 +101,11 @@
         else: [T: "punto"]                      	# 	(en: 'dot')
  - "/":                                           # 0x2f
     - test:
-        if: "ancestor-or-self::*[contains(@data-intent-property, ':literal:')]"
-        then: [T: "barra oblicua"]                        # 0x2f	(en: 'slash')
-        else: [T: "dividido por"]                   # 0x2f	(en: 'divided by')
+        - if: "ancestor-or-self::*[contains(@data-intent-property, ':literal:')]"
+          then: [T: "barra oblicua"]                        # 0x2f	(en: 'slash')
+        - else_if: "parent::*[contains(@data-intent-property, ':unit:')] or preceding-sibling::*[1][self::m:unit or contains(@data-intent-property, ':unit:')] or following-sibling::*[1][self::m:unit or contains(@data-intent-property, ':unit:')]"
+          then: [T: "por"]                          # 	(en: 'per')
+          else: [T: "dividido por"]                   # 0x2f	(en: 'divided by')
  - ":": [T: "dos puntos"]                       	#  0x3a	(en: 'colon')
  - ";": [T: "punto y coma"]                     	#  0x3b	(en: 'semicolon')
  - "<":                                         	#  0x3c
@@ -186,39 +188,48 @@
         else: [T: ""]                            
 
  - "¬": [T: "no"]                         	#  0xac	(en: 'not')
- - "°": [T: "grados"]                            	#  0xb0	(en: 'degrees')
+ - "°":                                           	#  0xb0	(en: 'degrees')
+    - test:
+        if: "parent::*[self::m:msup or self::m:skip-super][*[1][self::m:mn][.=1]] or preceding-sibling::*[1][self::m:mn][.=1]"
+        then: [T: "grado"]      # 1° (singular)
+        else: [T: "grados"]          # (en: 'degrees')
  - "±": [T: "más o menos"]                        	#  0xb1	(en: 'plus or minus')
  - "´": [T: "acento agudo"]                     	#  0xb4	(en: 'acute')
  - "·":                                            # 0xB7
     - test:
         # en español el punto medio es un signo de multiplicar (2·5 = "2 por 5"); el inglés dice "dot" en SimpleSpeak
-        if: "ancestor-or-self::*[contains(@data-intent-property, ':literal:')] or ($SpeechStyle = 'ClearSpeak' and $ClearSpeak_MultSymbolDot != 'Auto')"
-        then: [T: "punto"]      # 	(en: 'dot')
-        else_test:
+        - if: "not(ancestor-or-self::*[contains(@data-intent-property, ':literal:')]) and preceding-sibling::*[1][self::m:unit or contains(@data-intent-property, ':unit:')] and following-sibling::*[1][self::m:unit or contains(@data-intent-property, ':unit:')]"
+          then: [T: ""]
+        - else_if: "ancestor-or-self::*[contains(@data-intent-property, ':literal:')] or ($SpeechStyle = 'ClearSpeak' and $ClearSpeak_MultSymbolDot != 'Auto')"
+          then: [T: "punto"]      # 	(en: 'dot')
+          else_test:
             if: "$Verbosity = 'Verbose'"
             then: [T: "multiplicado por"]      # 	(en: 'times')
             else: [T: "por"]      # 	(en: 'times')
  - "×":                                          # 0xd7
     - test:
-        if: "$SpeechStyle = 'ClearSpeak'"
-        then_test:
-        - if: "$ClearSpeak_MultSymbolX = 'Auto'"
-          then:
-          - test:
-              if: "$Verbosity = 'Verbose'"
-              then: [T: "multiplicado por"]      # 	(en: 'times')
-              else: [T: "por"]      # 	(en: 'times')
-        - else_if: "$ClearSpeak_MultSymbolX = 'By'"
-          then: [T: "por"]      # 	(en: 'by')
-          else: [T: "cruz"]      # 	(en: 'cross')
+        if: "not(ancestor-or-self::*[contains(@data-intent-property, ':literal:')]) and preceding-sibling::*[1][self::m:unit or contains(@data-intent-property, ':unit:')] and following-sibling::*[1][self::m:unit or contains(@data-intent-property, ':unit:')]"
+        then: [T: ""]
         else_test:
-            if: "ancestor-or-self::*[contains(@data-intent-property, ':literal:')]"
-            then: [T: "cruz"]      # 	(en: 'cross')
-            else:
-            - test:
-                if: "$Verbosity = 'Verbose'"
-                then: [T: "multiplicado por"]      # 	(en: 'times')
-                else: [T: "por"]      # 	(en: 'times')
+            if: "$SpeechStyle = 'ClearSpeak'"
+            then_test:
+            - if: "$ClearSpeak_MultSymbolX = 'Auto'"
+              then:
+              - test:
+                  if: "$Verbosity = 'Verbose'"
+                  then: [T: "multiplicado por"]      # 	(en: 'times')
+                  else: [T: "por"]      # 	(en: 'times')
+            - else_if: "$ClearSpeak_MultSymbolX = 'By'"
+              then: [T: "por"]      # 	(en: 'by')
+              else: [T: "cruz"]      # 	(en: 'cross')
+            else_test:
+                if: "ancestor-or-self::*[contains(@data-intent-property, ':literal:')]"
+                then: [T: "cruz"]      # 	(en: 'cross')
+                else:
+                - test:
+                    if: "$Verbosity = 'Verbose'"
+                    then: [T: "multiplicado por"]      # 	(en: 'times')
+                    else: [T: "por"]      # 	(en: 'times')
  - "÷": [T: "dividido por"]                         	#  0xf7	(en: 'divided by')
  - "̀": [T: "acento grave ornamentado"]                     	#  0x300	(en: 'grave accent embellishment', google: 'embellido de acento grave')
  - "́": [T: "acento agudo ornamentado"]                     	#  0x301	(en: 'acute accent embellishment', google: 'embellido de acento agudo')
@@ -366,11 +377,15 @@
          if: "$Verbosity='Terse'"
          then: [T: "parcial"]                   	# 	(en: 'partial', google translation)
          else: [T: "derivada parcial"]          	# 	(en: 'partial derivative')
- - "∆":                                         	#  0x2206
-     - test: 
-         if: "$Verbosity!='Terse'"
-         then: [T: "el"]                        	# 	(en: 'the', google translation)
-     - T: "incremento"                          	# 	(en: 'laplacian of')
+ - "∆":                                           	#  0x2206
+    - test:
+        if: "preceding-sibling::* and following-sibling::*"
+        then: [T: "diferencia simétrica"]      # A ∆ B (CMU 7.2)
+        else:
+        - test:
+            if: "$Verbosity!='Terse'"
+            then: [T: "el"]          # (en: 'the')
+        - T: "incremento"          # (en: 'increment')
  - "∈":                                          # 0x2208
      # en español lo natural es "x pertenece a A"; ClearSpeak Auto también usa "pertenece a"
      - test:

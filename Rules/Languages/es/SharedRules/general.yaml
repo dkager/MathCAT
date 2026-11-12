@@ -1,5 +1,13 @@
 ---
 
+# Parentheses that only group a unit numerator or denominator. Canonicalize sets data-unit-grouping;
+# the nodes stay in the tree for braille. Literal speech still reads them.
+- name: unit-grouping-paren
+  tag: mo
+  match: "@data-unit-grouping and not(ancestor-or-self::*[contains(@data-intent-property, ':literal:')])"
+  replace:
+  - t: ""
+
 # number-sets are a little messy in that the base was converted to a number-set, so we have to match that (simple) case last
 
 - name: one-sided-limit
@@ -301,12 +309,6 @@
     # But it might be in a fraction as (C) "3 m/s" (parent is mfrac/mrow) or (D) "3 m^2/s^2" (parent is msup/mfrac/mrow)
     #   or even (E) {3 m^2}/s (parent is msup/mrow)
     # If in a fraction, only look in the numerator to find the coefficient
-  - MRowForCoefficient: "IfThenElse(parent::m:mrow, parent::m:mrow,
-                         IfThenElse(parent::m:power, ancestor::*[2][self::m:mrow],
-                         IfThenElse(parent::m:fraction and not(preceding-sibling::*), ancestor::*[2][self::m:mrow],
-                         IfThenElse(parent::m:power[parent::m:fraction and not(preceding-sibling::*)], ancestor::*[3][self::m:mrow], false()) ) ) )"
-  - IsSingular: "(not($MRowForCoefficient) and parent::*[name(.)!='skip-super' or *[1][.=1]]) or
-                 ($MRowForCoefficient and $MRowForCoefficient[(count(*) = 3 and *[1][self::m:mn and .=1] and *[2]='\u2062')])"
   - Prefix: "''"
   - Word: "''"  
   replace:
@@ -322,6 +324,9 @@
     - else_if: "DefinitionValue(., 'Speech', 'EnglishUnits') != ''"
       then:
       - set_variables: [Word: "DefinitionValue(., 'Speech', 'EnglishUnits')"]
+    - else_if: "DefinitionValue(., 'Speech', 'CurrencySymbols') != ''"
+      then:
+      - set_variables: [Word: "DefinitionValue(., 'Speech', 'CurrencySymbols')"]
 
     # do the first two chars match "da" and the remainder match an SIUnit
     - else_if: "string-length(.) >= 3 and 
@@ -346,55 +351,56 @@
       - set_variables:
         - Word: "text()"
 
-  - with:
-      variables:
-      # plural sin tilde: radián -> radianes
-      - PluralBase: "IfThenElse(substring($Word, string-length($Word)-2, 3) = 'ián', concat(substring($Word, 1, string-length($Word)-3), 'ian'), $Word)"
-      - LastChar: "substring($PluralBase, string-length($PluralBase), 1)"
-      - PluralEnding: "IfThenElse($LastChar = 'r' or $LastChar = 'l', 'es',
-                      IfThenElse(substring($PluralBase, string-length($PluralBase)-2, 3) = 'ian', 'es', 's' )) "
-      replace:
-      # somewhat complicated logic to avoid spaces around "-" as in "centi-grams" vs "centi - grams" -- probably doesn't matter
+  # PluralForms first, else PluralDefaultFromEnding / PluralSpellingDefaultSuffix
+  - test:
+      if: "$Prefix = ''"
+      then:
       - test:
-          if: "$Prefix = ''"
-          then:
-          - test:
-            - if: "$IsSingular"
-              # HACK: '\uF8FE' is used internally for the concatenation char by 'ct' -- this gets the prefix concatinated to the base
-              then: [x: "$Word"]
-            - else_if: "DefinitionValue($Word, 'Speech', 'PluralForms') != ''"
-              then: [x: "DefinitionValue($Word, 'Speech', 'PluralForms')"]
-              else: [x: "concat($PluralBase, $PluralEnding)"]
-          else:
-          - x: "$Prefix"
-          - test:
-            - if: "$IsSingular"
-              # HACK: '\uF8FE' is used internally for the concatenation char by 'ct' -- this gets the prefix concatinated to the base
-              then: [x: "concat('\uF8FE', $Word)"]
-            - else_if: "DefinitionValue($Word, 'Speech', 'PluralForms') != ''"
-              then: [x: "concat('\uF8FE', DefinitionValue($Word, 'Speech', 'PluralForms'))"]
-              else: [x: "concat('\uF8FE', $PluralBase, $PluralEnding)"]
+        - if: "UnitNumber(.) = 'one'"
+          then: [x: "$Word"]
+          else: [x: "UnitPluralForm($Word)"]
+      else:
+      - x: "$Prefix"
+      - test:
+        - if: "UnitNumber(.) = 'one'"
+          then: [x: "concat('\uF8FE', $Word)"]
+          else: [x: "concat('\uF8FE', UnitPluralForm($Word))"]
 
 # need to reverse the order of speech: $ 3 -> 3 dólares
+- name: grados-celsius-prescrito
+  # 25\,{}^{\circ}\mathrm{C} llega como C con un superíndice previo: "25 grados Celsius" (CMU)
+  tag: mmultiscripts
+  match:
+  - "count(*)=4 and *[1][self::m:mi or self::m:unit][.='C' or .='F'] and *[2][self::m:mprescripts] and *[3][self::m:none] and"
+  - "*[4][.='°' or .='∘'] and not(ancestor-or-self::*[contains(@data-intent-property, ':literal:')])"
+  variables:
+  - Numero: "preceding-sibling::*[1][.='\u2062']/preceding-sibling::*[1][self::m:mn] |
+             parent::m:mrow[count(*)=1]/preceding-sibling::*[1][.='\u2062']/preceding-sibling::*[1][self::m:mn]"
+  replace:
+  - test:
+      if: "$Numero = 1"
+      then: [T: "grado"]      # phrase(1 'grado' Celsius)
+      else: [T: "grados"]      # phrase(25 'grados' Celsius)
+  - test:
+      if: "*[1]='C'"
+      then: [T: "Celsius"]      # phrase(25 grados 'Celsius')
+      else: [T: "Fahrenheit"]      # phrase(25 grados 'Fahrenheit')
+
 - name: currency
   tag: mrow
-  match: "count(*)=3 and DefinitionValue(*[1], 'Speech', 'CurrencySymbols') != ''"
+  match: "count(*)=3 and DefinitionValue(*[1], 'Speech', 'CurrencySymbols') != '' and *[3][self::m:mn]"
   variables:
-    # If the amount is singular, we don't add the plural ending.
-  - IsSingular: "*[3][self::m:mn and .=1] and *[2]='\u2062'"
   - CurrencyWord: "DefinitionValue(*[1], 'Speech', 'CurrencySymbols')"
-  - LastChar: "substring(DefinitionValue(*[1], 'Speech', 'CurrencySymbols'), string-length(DefinitionValue(*[1], 'Speech', 'CurrencySymbols')), 1)"
   replace:
   - bookmark: "*[3]/@id"
-  - x: "*[3]"
   - test:
-    - if: "$IsSingular"
+    - if: "UnitNumber(*[1]) = 'one'"
+      then: [x: "OneForUnit(*[1])"]
+      else: [x: "*[3]"]
+  - test:
+    - if: "UnitNumber(*[1]) = 'one'"
       then: [x: "$CurrencyWord"]
-    - else_if: "DefinitionValue($CurrencyWord, 'Speech', 'PluralForms') != ''"
-      then: [x: "DefinitionValue($CurrencyWord, 'Speech', 'PluralForms')"]
-    - else_if: "$LastChar='r' or $LastChar='l' or $LastChar='n'"
-      then: [x: "$CurrencyWord", ct: "es"]      # dólar -> dólares
-      else: [x: "$CurrencyWord", ct: "s"]       # euro -> euros
+      else: [x: "UnitPluralForm($CurrencyWord)"]
 
 - name: sin
   tag: mi
@@ -668,14 +674,22 @@
       else: [T: "exponencial"]
 
 - name: covariance
+  # también Var (CMU cap. 12): "la covarianza de X coma Y", "la varianza de X"
   tag: mi
-  match: ".='Cov'"
+  match: ".='Cov' or .='Var'"
   replace:
   - bookmark: "@id"
   - test:
-      if: "$Verbosity='Terse'"
+      if: "$Verbosity!='Terse' and (parent::m:apply-function or following-sibling::*[1][.='\u2061'])"
+      then: [T: "la"]      # phrase('la' varianza de X)
+  - test:
+    - if: "$Verbosity='Terse' and .='Cov'"
       then: [T: "cov"]
-      else: [T: "covarianza"]
+    - else_if: "$Verbosity='Terse'"
+      then: [T: "var"]
+    - else_if: ".='Cov'"
+      then: [T: "covarianza"]      # phrase(la 'covarianza' de X coma Y)
+      else: [T: "varianza"]      # phrase(la 'varianza' de X)
 
 - name: factorial-de
   # propia del español, como el CMU: "factorial de n", "doble factorial de n"
@@ -1345,11 +1359,11 @@
     - if: ".='-' or .=':'"
       then: [T: "enlace simple"]      # phrase(un 'enlace simple' entre dos átomos)
     - else_if: ".='=' or .='∷'"
-      then: [T: "doble enlace"]
+      then: [T: "enlace doble"]      # ONCE B 6-1, 8.1.2
     - else_if: ".='≡'"
-      then: [T: "triple enlace"]
+      then: [T: "enlace triple"]
     - else_if: ".='≣'"
-      then: [T: "cuádruple enlace"]
+      then: [T: "enlace cuádruple"]
       else: [x: "text()"]
 
 - name: chemical-formula-operator
@@ -1368,15 +1382,38 @@
     - if: ".='→' or .='⟶'"
       then_test:
         if: "$Verbosity='Terse'"
-        then: [T: "forma"]      # phrase(hidrógeno y oxígeno 'forma' agua)
-        else: [T: "reacciona para formar"]      # phrase(hidrógeno y oxígeno 'reacciona para formar' agua)
-    - else_if: ".='⇌' or .='🣑'" # U+01F8D1
+        then: [T: "da"]      # phrase(hidrógeno más oxígeno 'da' agua)
+        else: [T: "produce"]      # phrase(hidrógeno más oxígeno 'produce' agua) (SEP, EcuRed)
+    - else_if: ".='⇌' or .='🣑' or .='⇄' or .='⇆'" # U+01F8D1; ⇄ ⇆ también son equilibrio (ONCE B 6-1, 6.3)
       then: [T: "está en equilibrio con"]
     - else_if: ".='🣓'" # U+1F8D3
       then: [T: "está en equilibrio desplazado a la izquierda con"]
     - else_if: ".='🣒'" # U+1F8D2
       then: [T: "está en equilibrio desplazado a la derecha con"]
       else: [x: "*"]
+
+- name: chemical-gas-precipitate-hydrate
+  # CO₂↑, CaCO₃↓ y el punto de los hidratos (ONCE B 6-1, 6.5, 6.6 y 8.2.2; SEP)
+  tag: [chemical-equation-operator, chemical-formula-operator]
+  match: ".='↑' or .='↓' or .='·' or .='⋅' or .='⇄' or .='⇆'"
+  replace:
+  - bookmark: "@id"
+  - test:
+    - if: ".='↑'"
+      then: [T: "desprendimiento gaseoso"]      # phrase(c o 2 'desprendimiento gaseoso')
+    - else_if: ".='↓'"
+      then: [T: "precipitado"]      # phrase(c a c o 3 'precipitado')
+    - else_if: ".='⇄' or .='⇆'"
+      then: [T: "está en equilibrio con"]      # ONCE B 6-1, 6.3
+      else: [T: "punto"]      # phrase(n a 2 s o 4 'punto' 5 h 2 o)
+
+- name: chemical-arrow-with-heat
+  # → con Δ encima: "produce con calor" (SEP, EcuRed)
+  tag: mover
+  match: "*[1][self::m:chemical-arrow-operator] and *[2][.='Δ' or .='∆']"
+  replace:
+  - x: "*[1]"
+  - T: "con calor"      # phrase(c a c o 3 produce 'con calor' c a o)
 
 - name: chemical-equation-operator
   tag: chemical-equation-operator
