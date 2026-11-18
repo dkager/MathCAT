@@ -821,6 +821,30 @@ mod negatieve_getallen {
         test_braille("Dedicon", expr, r#"x = -16,899..."#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 5: Min (U+2212) vast aan het getal in de <mn>, na een plusteken: de min wordt "-", zonder spatie ervoor.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mn>−5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + -5"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 6: Losse <mo>-</mo> na een plusteken, voor een variabele: de min hoort bij de variabele.
+    #[test]
+    fn voorbeeld_06() -> Result<()> {
+        let expr = r#"<math><mrow><mi>a</mi><mo>+</mo><mo>-</mo><mi>b</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"a + -b"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 7: Losse <mo>-</mo> na een isgelijkteken, voor een variabele: de min hoort bij de variabele.
+    #[test]
+    fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><mrow><mi>x</mi><mo>=</mo><mo>-</mo><mi>y</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"x = -y"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: sommen met mingetallen
