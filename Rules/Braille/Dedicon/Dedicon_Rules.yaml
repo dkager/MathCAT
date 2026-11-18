@@ -290,6 +290,8 @@
 # A side gets a space if the neighbour there is not another mtext (and not a bracket, as for fractions).
 # As in the mfrac rule, the neighbour may also be found in a row around it (when the mtext is first or last in its row,
 #   also more than one row up): "x = 1 en y = 2" with "en y = 2" in a nested row.
+# The space before also applies when the mtext is the base of msup/msub/msubsup: "3 cm^3".
+# There is never a space after the base, because the script follows directly.
 -
   name: default
   tag: [mtext, ms]
@@ -299,7 +301,9 @@
   - After: "ancestor-or-self::*[following-sibling::*][1]"    # nearest element (this one or a row around it) with something after it
   replace:
   - test:
-      if: "(count($Before | .) = 1 or $Before[self::m:mrow]) and $Before[parent::m:mrow or parent::m:math] and
+      if: "(count($Before | .) = 1 or $Before[self::m:mrow] or
+            ($Before[self::m:msup or self::m:msub or self::m:msubsup] and count($Before/*[1] | .) = 1)) and
+           $Before[parent::m:mrow or parent::m:math] and
            not(ancestor::*[not(self::m:mrow)][count(. | $Before/descendant::*) = count($Before/descendant::*)]) and
            $Before/preceding-sibling::*[1][not(self::m:mtext or (self::m:mo and IsInDefinition(., 'Braille', 'OpeningBrackets')))]"
       then: [t: "𝐰"]
