@@ -52,6 +52,7 @@ mod braille {
     mod Dedicon {
         mod website;
         mod misc;
+        mod parens;
     }
 }
 
