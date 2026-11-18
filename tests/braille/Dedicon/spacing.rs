@@ -216,6 +216,8 @@ mod spatie_aan_eind_van_mi {
 }
 
 /// Samengestelde eenheid met een breukstreep (km/u) als geheel in een mtext: voor een mtext komt altijd een spatie.
+/// NOTE: needs discussion: are units like km/u ever written as a real fraction (mfrac) in the MathML?
+///   And if so, do numerator and denominator need brackets ("50(km)/(u)" with mtext, "50 km/u" with mi)?
 mod eenheid_met_breukstreep_in_mtext {
     use crate::common::*;
     use anyhow::Result;
@@ -256,6 +258,23 @@ mod eenheid_met_breukstreep_in_mtext {
     #[test]
     fn gewone_spatie_in_mn() -> Result<()> {
         let expr = r#"<math><mrow><mn>50 </mn><mtext>km/u</mtext></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"50 km/u"#)?;
+        return Ok(());
+    }
+
+    /// Getal met km/u als echte breuk, teller en noemer elk in een mtext: de teller en de noemer krijgen haakjes,
+    /// zonder spatie na het getal.
+    #[test]
+    fn breuk_met_mtext() -> Result<()> {
+        let expr = r#"<math><mrow><mn>50</mn><mfrac><mtext>km</mtext><mtext>u</mtext></mfrac></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"50(km)/(u)"#)?;
+        return Ok(());
+    }
+
+    /// Getal met km/u als echte breuk, teller en noemer elk in een mi: geen haakjes, wel een spatie na het getal.
+    #[test]
+    fn breuk_met_mi() -> Result<()> {
+        let expr = r#"<math><mrow><mn>50</mn><mfrac><mi>km</mi><mi>u</mi></mfrac></mrow></math>"#;
         test_braille("Dedicon", expr, r#"50 km/u"#)?;
         return Ok(());
     }
