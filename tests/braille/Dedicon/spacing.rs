@@ -184,3 +184,33 @@ mod eenheid_in_mtext_spatie_in_mn {
         return Ok(());
     }
 }
+
+/// Spatie aan het eind van een mi (rapport § 2.4): een vaste spatie blijft staan, een gewone spatie verdwijnt.
+mod spatie_aan_eind_van_mi {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Afkorting in een mi met een vaste spatie (U+00A0) aan het eind: de spatie blijft staan.
+    #[test]
+    fn vaste_spatie() -> Result<()> {
+        let expr = r#"<math><mrow><mi>opp.&#xA0;</mi><mi>I</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"opp. I"#)?;
+        return Ok(());
+    }
+
+    /// Afkorting in een mi met een gewone spatie aan het eind: de spatie verdwijnt.
+    #[test]
+    fn gewone_spatie() -> Result<()> {
+        let expr = r#"<math><mrow><mi>opp. </mi><mi>I</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"opp.I"#)?;
+        return Ok(());
+    }
+
+    /// Afkorting met nummer samen in een mi, met een gewone spatie ertussen (zo noteren jullie het voortaan): de spatie blijft staan.
+    #[test]
+    fn spatie_binnen_mi() -> Result<()> {
+        let expr = r#"<math><mrow><mi>opp. I</mi><mo>+</mo><mi>opp. II</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"opp. I + opp. II"#)?;
+        return Ok(());
+    }
+}

@@ -909,11 +909,32 @@ mod breuken {
         return Ok(());
     }
 
-    /// Voorbeeld 7: Haakjes in de noemer: de hele noemer krijgt haakjes eromheen.
+    /// Voorbeeld 7: Haakjes in de noemer: de hele noemer krijgt haakjes eromheen. De teller xy (twee mi's,
+    /// onzichtbare vermenigvuldiging) krijgt ook haakjes.
+    /// NOTE: needs discussion: voorbeeld 8 means the same (an invisible multiplication in the numerator),
+    /// but with xy in one mi the numerator gets no parentheses.
     #[test]
     fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><mfrac><mrow><mi>x</mi><mi>y</mi></mrow><mrow><mi>x</mi><mrow><mo>(</mo><mrow><mi>x</mi><mo>+</mo><mi>y</mi></mrow><mo>)</mo></mrow></mrow></mfrac></math>"#;
+        test_braille("Dedicon", expr, r#"(xy)/(x(x + y))"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 8: Als voorbeeld 7, maar met xy in één mi in de teller: de teller krijgt geen haakjes.
+    /// NOTE: needs discussion, see voorbeeld 7.
+    #[test]
+    fn voorbeeld_08() -> Result<()> {
         let expr = r#"<math><mfrac><mi>xy</mi><mrow><mi>x</mi><mrow><mo>(</mo><mrow><mi>x</mi><mo>+</mo><mi>y</mi></mrow><mo>)</mo></mrow></mrow></mfrac></math>"#;
         test_braille("Dedicon", expr, r#"xy/(x(x + y))"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 9: Teller met een getal en een variabele (onzichtbare vermenigvuldiging): de teller krijgt haakjes.
+    /// NOTE: needs discussion, see voorbeeld 7.
+    #[test]
+    fn voorbeeld_09() -> Result<()> {
+        let expr = r#"<math><mfrac><mrow><mn>3</mn><mi>x</mi></mrow><mn>2</mn></mfrac></math>"#;
+        test_braille("Dedicon", expr, r#"(3x)/2"#)?;
         return Ok(());
     }
 }
