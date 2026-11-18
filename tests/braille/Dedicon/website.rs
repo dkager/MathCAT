@@ -700,7 +700,6 @@ mod som_en_product {
     }
 
     /// Voorbeeld 4: Het product van factoren x_i, voor i is m tot en met i is n.
-    /// NOTE: the product sign is written "~P" as in the rules text and symbol table (the example shows "Pi").
     #[test]
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><munderover><mo>∏</mo> <mrow><mi>i</mi> <mo>=</mo> <mi>m</mi> </mrow><mi>n</mi> </munderover><mo>&#x2061;</mo> <msub><mi>x</mi> <mi>i</mi></msub></math>"#;

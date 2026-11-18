@@ -1398,3 +1398,26 @@ mod stelsels_vergelijkingen {
         return Ok(());
     }
 }
+
+// Dedicon examples: som en product
+// The sum and product signs are "~S" and "~P" (confirmed by Dedicon); with limits see website.rs, module som_en_product.
+mod som_en_product {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Sommatieteken zonder grenzen: "~S", direct gevolgd door de term.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mo>∑</mo><msub><mi>x</mi><mi>i</mi></msub></math>"#;
+        test_braille("Dedicon", expr, r#"~Sx_i"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Productteken zonder grenzen: "~P", direct gevolgd door de factor.
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><mo>∏</mo><msub><mi>x</mi><mi>i</mi></msub></math>"#;
+        test_braille("Dedicon", expr, r#"~Px_i"#)?;
+        return Ok(());
+    }
+}
