@@ -1444,3 +1444,159 @@ mod weglatingstekens {
         return Ok(());
     }
 }
+
+// Dedicon examples: invulvelden
+// A blank to fill in is written as three dots, in an mi, mo or mtext, either as three full stops ("...")
+// or as the ellipsis character U+2026 ("…"). It is an operand like a number: the operators around it keep their spaces.
+// NOTE: needs discussion: should blanks be marked with MathML 4 intent (e.g. intent=":blank"), so that they can be
+//   told apart from an ellipsis and get their own notation?
+mod invulvelden {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Invulveld met drie punten "..." in een mi, op de plaats van de uitkomst: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mi_rechts() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mn>2</mn><mo>=</mo><mi>...</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + 2 = ..."#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met drie punten "..." in een mi, op de plaats van de tweede term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mi_midden() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mi>...</mi><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + ... = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met drie punten "..." in een mi, op de plaats van de eerste term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mi_links() -> Result<()> {
+        let expr = r#"<math><mrow><mi>...</mi><mo>+</mo><mn>2</mn><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"... + 2 = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met drie punten "..." in een mo, op de plaats van de uitkomst: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mo_rechts() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mn>2</mn><mo>=</mo><mo>...</mo></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + 2 = ..."#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met drie punten "..." in een mo, op de plaats van de tweede term: de operatoren eromheen houden hun spaties.
+    #[test]
+    #[ignore = "canonicalize turns <mo>...</mo> into \"…\" but keeps it an mo, so it is not an operand (see canonicalize.rs)"]
+    fn mo_midden() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mo>...</mo><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + ... = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met drie punten "..." in een mo, op de plaats van de eerste term: de operatoren eromheen houden hun spaties.
+    #[test]
+    #[ignore = "canonicalize turns <mo>...</mo> into \"…\" but keeps it an mo, so it is not an operand (see canonicalize.rs)"]
+    fn mo_links() -> Result<()> {
+        let expr = r#"<math><mrow><mo>...</mo><mo>+</mo><mn>2</mn><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"... + 2 = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met drie punten "..." in een mtext, op de plaats van de uitkomst: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mtext_rechts() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mn>2</mn><mo>=</mo><mtext>...</mtext></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + 2 = ..."#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met drie punten "..." in een mtext, op de plaats van de tweede term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mtext_midden() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mtext>...</mtext><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + ... = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met drie punten "..." in een mtext, op de plaats van de eerste term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mtext_links() -> Result<()> {
+        let expr = r#"<math><mrow><mtext>...</mtext><mo>+</mo><mn>2</mn><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"... + 2 = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met het weglatingsteken "…" (U+2026) in een mi, op de plaats van de uitkomst: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mi_ellips_rechts() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mn>2</mn><mo>=</mo><mi>…</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + 2 = ..."#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met het weglatingsteken "…" (U+2026) in een mi, op de plaats van de tweede term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mi_ellips_midden() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mi>…</mi><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + ... = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met het weglatingsteken "…" (U+2026) in een mi, op de plaats van de eerste term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mi_ellips_links() -> Result<()> {
+        let expr = r#"<math><mrow><mi>…</mi><mo>+</mo><mn>2</mn><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"... + 2 = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met het weglatingsteken "…" (U+2026) in een mo, op de plaats van de uitkomst: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mo_ellips_rechts() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mn>2</mn><mo>=</mo><mo>…</mo></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + 2 = ..."#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met het weglatingsteken "…" (U+2026) in een mo, op de plaats van de tweede term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mo_ellips_midden() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mo>…</mo><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + ... = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met het weglatingsteken "…" (U+2026) in een mo, op de plaats van de eerste term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mo_ellips_links() -> Result<()> {
+        let expr = r#"<math><mrow><mo>…</mo><mo>+</mo><mn>2</mn><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"... + 2 = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met het weglatingsteken "…" (U+2026) in een mtext, op de plaats van de uitkomst: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mtext_ellips_rechts() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mn>2</mn><mo>=</mo><mtext>…</mtext></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + 2 = ..."#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met het weglatingsteken "…" (U+2026) in een mtext, op de plaats van de tweede term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mtext_ellips_midden() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mtext>…</mtext><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 + ... = 5"#)?;
+        return Ok(());
+    }
+
+    /// Invulveld met het weglatingsteken "…" (U+2026) in een mtext, op de plaats van de eerste term: de operatoren eromheen houden hun spaties.
+    #[test]
+    fn mtext_ellips_links() -> Result<()> {
+        let expr = r#"<math><mrow><mtext>…</mtext><mo>+</mo><mn>2</mn><mo>=</mo><mn>5</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"... + 2 = 5"#)?;
+        return Ok(());
+    }
+}
