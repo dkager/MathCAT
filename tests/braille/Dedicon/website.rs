@@ -874,12 +874,11 @@ mod verzamelingen {
     }
 
     /// Voorbeeld 10: Geen element van de natuurlijke getallen.
-    /// NOTE: the linear notation on the website has "-2", but its MathML has "2" (2 is a natural number,
-    /// so -2 is probably meant); the expected output follows the MathML used here.
+    /// The MathML on the website is wrong here: it has "2" where "-2" is meant (as in its linear notation).
     #[test]
     fn voorbeeld_10() -> Result<()> {
-        let expr = r#"<math><mn>2</mn><mo>∉</mo><mi>ℕ</mi></math>"#;
-        test_braille("Dedicon", expr, r#"2 geenElement N"#)?;
+        let expr = r#"<math><mrow><mo>-</mo><mn>2</mn></mrow><mo>∉</mo><mi>ℕ</mi></math>"#;
+        test_braille("Dedicon", expr, r#"-2 geenElement N"#)?;
         return Ok(());
     }
 }
