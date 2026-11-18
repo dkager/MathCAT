@@ -291,7 +291,7 @@
  - "‖": [t: "||"]                            # 0x2016 double vertical line
 
 # ellipses (not in the Dedicon symbol list): written as three dots in all directions, e.g. in matrices
-#   "[a_11:...:a_1n; ...:...:...; a_m1:...:a_mn]"; chosen over the non-ASCII "…" used on the website
+#   "[a_11:...:a_1n; ...:...:...; a_m1:...:a_mn]"
  - "…": [t: "..."]                           # 0x2026 horizontal ellipsis
  - "⋯": [t: "..."]                           # 0x22ef midline horizontal ellipsis
  - "⋮": [t: "..."]                           # 0x22ee vertical ellipsis

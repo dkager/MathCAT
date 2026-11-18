@@ -1421,3 +1421,26 @@ mod som_en_product {
         return Ok(());
     }
 }
+
+// Dedicon examples: weglatingstekens
+// All ellipses are written as three dots: "..." (confirmed by Dedicon); in a matrix see website.rs, module matrices.
+mod weglatingstekens {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Opsomming met een weglatingsteken (U+2026) in een mi: drie punten, met komma's eromheen.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mrow><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>n</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"1, 2, ..., n"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Som met een weglatingsteken op middenhoogte (U+22EF) in een mo: drie punten, met spaties rond de plustekens.
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><mrow><msub><mi>a</mi><mn>1</mn></msub><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mi>a</mi><mi>n</mi></msub></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"a_1 + ... + a_n"#)?;
+        return Ok(());
+    }
+}
