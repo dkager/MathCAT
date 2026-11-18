@@ -175,9 +175,6 @@
 # NOTE: eta, theta and chi deliberately use NON-ASCII letters, exactly as in the Dedicon table:
 #   eta ~û / ~Û, theta ~ô / ~Ô, chi ~ç / ~Ç
 #   This is an intended exception to ASCII-only output, following the Dedicon symbol table; do not 'fix' these to ASCII.
-# NOTE: the Greek letters still need to be checked with Dedicon. Other Dedicon sources differ from the symbol table
-#   on the website for eta, pi, upsilon, chi, psi and omega (e.g. pi as "pi" instead of "~p", as in one of the website
-#   examples, and chi and psi swapped), so these mappings may change.
  - "Α": [t: "~A"]                            # 0x391 greek capital letter alpha
  - "Β": [t: "~B"]                            # 0x392 greek capital letter beta
  - "Γ": [t: "~G"]                            # 0x393 greek capital letter gamma
@@ -228,13 +225,13 @@
  - "ψ": [t: "~y"]                            # 0x3c8 greek small letter psi
  - "ω": [t: "~w"]                            # 0x3c9 greek small letter omega
 
-# Dedicon symbols: logic (logica); prefix words get a removable space after them (not "nt", see below)
+# Dedicon symbols: logic (logica); prefix words get a removable space after them
 # Spaces inside a replacement must be written as 𝐰: MathCAT removes plain spaces from braille output
+# The not sign is a prefix: "nt P", but no space before a bracket: "nt(P of Q)" (cleanup removes it).
+#   It is not in AddSpacing (definitions.yaml), so it never gets a space before it.
  - "∧": [t: "en"]                            # 0x2227 logical and
  - "∨": [t: "of"]                            # 0x2228 logical or
-# NOTE: the not sign is written without a space for now ("ntP"); this still needs discussion,
-#   the Dedicon examples show "¬P" and the symbol table "nt" (see tests/braille/Dedicon/website.rs, module logica)
- - "¬": [t: "nt"]                            # 0xac not sign
+ - "¬": [t: "nt𝐖"]                           # 0xac not sign
  - "⊻": [t: "xof"]                           # 0x22bb xor
  - "↔": [t: ",:,"]                           # 0x2194 left right arrow
  - "∀": [t: "𝐖voor𝐰alle𝐖"]                   # 0x2200 for all

@@ -405,7 +405,6 @@ mod letters_in_andere_stijlen {
 }
 
 // Dedicon examples: griekse letters
-// NOTE: the Greek letters still need to be checked with Dedicon (see unicode.yaml).
 mod griekse_letters {
     use crate::common::*;
     use anyhow::Result;
@@ -419,7 +418,6 @@ mod griekse_letters {
     }
 
     /// Voorbeeld 2: Alle Griekse hoofdletters.
-    /// NOTE: to check with Dedicon, especially eta "~Û", theta "~Ô" and chi "~Ç".
     #[test]
     fn voorbeeld_02() -> Result<()> {
         let expr = r#"<math><mi>Α</mi><mo>,</mo><mi>Β</mi><mo>,</mo><mi>Γ</mi><mo>,</mo><mi>Δ</mi><mo>,</mo><mi>Ε</mi><mo>,</mo><mi>Ζ</mi><mo>,</mo><mi>Η</mi><mo>,</mo><mi>Θ</mi><mo>,</mo><mi>Ι</mi><mo>,</mo><mi>Κ</mi><mo>,</mo><mi>Λ</mi><mo>,</mo><mi>Μ</mi><mo>,</mo><mi>Ν</mi><mo>,</mo><mi>Ξ</mi><mo>,</mo><mi>Ο</mi><mo>,</mo><mi>Π</mi><mo>,</mo><mi>Ρ</mi><mo>,</mo><mi>Σ</mi><mo>,</mo><mi>Τ</mi><mo>,</mo><mi>Υ</mi><mo>,</mo><mi>Φ</mi><mo>,</mo><mi>Χ</mi><mo>,</mo><mi>Ψ</mi><mo>,</mo><mi>Ω</mi></math>"#;
@@ -428,7 +426,6 @@ mod griekse_letters {
     }
 
     /// Voorbeeld 3: Alle Griekse kleine letters.
-    /// NOTE: to check with Dedicon, especially eta "~û", theta "~ô" and chi "~ç".
     #[test]
     fn voorbeeld_03() -> Result<()> {
         let expr = r#"<math><mi>α</mi><mo>,</mo><mi>β</mi><mo>,</mo><mi>γ</mi><mo>,</mo><mi>δ</mi><mo>,</mo><mi>ε</mi><mo>,</mo><mi>ζ</mi><mo>,</mo><mi>η</mi><mo>,</mo><mi>θ</mi><mo>,</mo><mi>ι</mi><mo>,</mo><mi>κ</mi><mo>,</mo><mi>λ</mi><mo>,</mo><mi>μ</mi><mo>,</mo><mi>ν</mi><mo>,</mo><mi>ξ</mi><mo>,</mo><mi>ο</mi><mo>,</mo><mi>π</mi><mo>,</mo><mi>ρ</mi><mo>,</mo><mi>σ</mi><mo>,</mo><mi>τ</mi><mo>,</mo><mi>υ</mi><mo>,</mo><mi>φ</mi><mo>,</mo><mi>χ</mi><mo>,</mo><mi>ψ</mi><mo>,</mo><mi>ω</mi></math>"#;
@@ -437,7 +434,6 @@ mod griekse_letters {
     }
 
     /// Voorbeeld 4: Griekse letter direct na een getal en voor een variabele.
-    /// NOTE: no space, as for other letters ("3x"); to check with Dedicon whether "2~pr" is clear.
     #[test]
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><mn>3</mn><mi>Φ</mi><mo>+</mo><mn>2</mn><mi>π</mi><mi>r</mi></math>"#;
@@ -843,6 +839,22 @@ mod negatieve_getallen {
     fn voorbeeld_07() -> Result<()> {
         let expr = r#"<math><mrow><mi>x</mi><mo>=</mo><mo>-</mo><mi>y</mi></mrow></math>"#;
         test_braille("Dedicon", expr, r#"x = -y"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 8: Minteken vóór een haakje: geen spatie tussen de min en het haakje.
+    #[test]
+    fn voorbeeld_08() -> Result<()> {
+        let expr = r#"<math><mrow><mo>-</mo><mrow><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"-(a + b)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 9: Als voorbeeld 8, maar met het wiskundige minteken (U+2212): ook "-", zonder spatie voor het haakje.
+    #[test]
+    fn voorbeeld_09() -> Result<()> {
+        let expr = r#"<math><mrow><mo>−</mo><mrow><mo>(</mo><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mo>)</mo></mrow></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"-(a + b)"#)?;
         return Ok(());
     }
 }

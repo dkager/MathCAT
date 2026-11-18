@@ -202,7 +202,6 @@ mod differentieren_en_integreren {
     /// DISCUSSION: the Dedicon page writes "sinx" here without a space, but "log x" with a space in the
     /// logarithm examples. For now we chose "sin x" (a space after every function name), so the expected
     /// output differs from the website. See the named-functions rule in Rules/Braille/Dedicon/Dedicon_Rules.yaml.
-    /// NOTE: pi is written "~p" as in the symbol table for Greek letters (the example shows "pi").
     #[test]
     fn integreren_voorbeeld_02() -> Result<()> {
         let expr = r#"<math><munderover><mo>∫</mo> <mrow><mfrac><mn>1</mn> <mn>2</mn> </mfrac><mo>&#x2062;</mo> <mi>π</mi> </mrow><mi>π</mi> </munderover><mrow><mo>sin</mo> <mo>&#x2061;</mo> <mi>x</mi> </mrow><mi>dx</mi></math>"#;
@@ -377,9 +376,6 @@ mod logaritmen {
 
 // Dedicon examples: logica
 // Source: https://www.dedicon.nl/artikel/scholen/regels-en-voorbeelden-logica/
-// NOTE: the not sign is expected as "nt" directly followed by the operand ("ntP", "nt(P of Q)").
-// This still needs discussion: the Dedicon examples show "¬P", the symbol table says "nt",
-// and it is not yet decided whether a space should follow ("nt P").
 mod logica {
     use crate::common::*;
     use anyhow::Result;
@@ -396,7 +392,7 @@ mod logica {
     #[test]
     fn voorbeeld_02() -> Result<()> {
         let expr = r#"<math><mrow><mo>¬</mo><mi>P</mi></mrow> <mo>∧</mo> <mrow><mo>¬</mo><mi>Q</mi></mrow> <mo>=</mo> <mo>¬</mo> <mrow><mo>(</mo> <mi>P</mi><mo>∨</mo><mi>Q</mi> <mo>)</mo></mrow></math>"#;
-        test_braille("Dedicon", expr, r#"ntP en ntQ = nt(P of Q)"#)?;
+        test_braille("Dedicon", expr, r#"nt P en nt Q = nt(P of Q)"#)?;
         return Ok(());
     }
 
@@ -404,7 +400,7 @@ mod logica {
     #[test]
     fn voorbeeld_03() -> Result<()> {
         let expr = r#"<math><mi>P</mi><mo>→</mo><mi>Q</mi> <mo>=</mo> <mrow><mo>¬</mo><mi>P</mi></mrow> <mo>∨</mo> <mi>Q</mi></math>"#;
-        test_braille("Dedicon", expr, r#"P --> Q = ntP of Q"#)?;
+        test_braille("Dedicon", expr, r#"P --> Q = nt P of Q"#)?;
         return Ok(());
     }
 
@@ -412,7 +408,7 @@ mod logica {
     #[test]
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><mi>P</mi><mo>↔</mo><mi>Q</mi> <mo>=</mo> <mrow><mo>(</mo> <mrow><mo>¬</mo><mi>P</mi></mrow> <mo>∧</mo> <mrow><mo>¬</mo><mi>Q</mi></mrow> <mo>)</mo></mrow> <mo>∨</mo> <mrow><mo>(</mo> <mi>P</mi><mo>∧</mo><mi>Q</mi> <mo>)</mo></mrow></math>"#;
-        test_braille("Dedicon", expr, r#"P ,:, Q = (ntP en ntQ) of (P en Q)"#)?;
+        test_braille("Dedicon", expr, r#"P ,:, Q = (nt P en nt Q) of (P en Q)"#)?;
         return Ok(());
     }
 
