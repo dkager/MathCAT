@@ -1282,6 +1282,14 @@ mod relatietekens {
         test_braille("Dedicon", expr, r#"y >= 5"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 7: Evenredig met: "=ev", met spaties eromheen zoals bij de andere relatietekens.
+    #[test]
+    fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><mrow><mi>F</mi><mo>∝</mo><mi>m</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"F =ev m"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: spatie tussen getal en eenheid
