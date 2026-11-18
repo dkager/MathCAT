@@ -214,3 +214,49 @@ mod spatie_aan_eind_van_mi {
         return Ok(());
     }
 }
+
+/// Samengestelde eenheid met een breukstreep (km/u) als geheel in een mtext: voor een mtext komt altijd een spatie.
+mod eenheid_met_breukstreep_in_mtext {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Getal met de eenheid km/u in een mtext, zonder spatie: één spatie voor de eenheid.
+    #[test]
+    fn zonder_spatie() -> Result<()> {
+        let expr = r#"<math><mrow><mn>50</mn><mtext>km/u</mtext></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"50 km/u"#)?;
+        return Ok(());
+    }
+
+    /// Getal met de eenheid km/u in een mtext, met een vaste spatie (U+00A0) aan het begin van de mtext: één spatie voor de eenheid.
+    #[test]
+    fn vaste_spatie_in_mtext() -> Result<()> {
+        let expr = r#"<math><mrow><mn>50</mn><mtext>&#xA0;km/u</mtext></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"50 km/u"#)?;
+        return Ok(());
+    }
+
+    /// Getal met de eenheid km/u in een mtext, met een gewone spatie aan het begin van de mtext: één spatie voor de eenheid.
+    #[test]
+    fn gewone_spatie_in_mtext() -> Result<()> {
+        let expr = r#"<math><mrow><mn>50</mn><mtext> km/u</mtext></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"50 km/u"#)?;
+        return Ok(());
+    }
+
+    /// Getal met de eenheid km/u in een mtext, met een vaste spatie (U+00A0) aan het eind van de mn: één spatie voor de eenheid.
+    #[test]
+    fn vaste_spatie_in_mn() -> Result<()> {
+        let expr = r#"<math><mrow><mn>50&#xA0;</mn><mtext>km/u</mtext></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"50 km/u"#)?;
+        return Ok(());
+    }
+
+    /// Getal met de eenheid km/u in een mtext, met een gewone spatie aan het eind van de mn: één spatie voor de eenheid.
+    #[test]
+    fn gewone_spatie_in_mn() -> Result<()> {
+        let expr = r#"<math><mrow><mn>50 </mn><mtext>km/u</mtext></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"50 km/u"#)?;
+        return Ok(());
+    }
+}
