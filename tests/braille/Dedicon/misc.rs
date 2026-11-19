@@ -1162,6 +1162,32 @@ mod machten {
     }
 }
 
+// Dedicon examples: indices voor het grondtal (mmultiscripts)
+// A superscript before the base is written before it and ended by a space, as in the European logarithm "^10 log 100"
+// (see website.rs, module logaritmen).
+// NOTE: <none/> is not a MathML Core element (W3C Candidate Recommendation, 24 June 2025, section 2.1);
+// MathML Core uses an empty <mrow/> for an empty script position. MathCAT treats both the same.
+mod indices_voor_het_grondtal {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Isotoop met massagetal, lege onderindex als <none/>.
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mmultiscripts><mi>Cl</mi><mprescripts/><none/><mn>35</mn></mmultiscripts></math>"#;
+        test_braille("Dedicon", expr, r#"^35 Cl"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Isotoop met massagetal, lege onderindex als <mrow/> (MathML Core): dezelfde notatie.
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><mmultiscripts><mi>Cl</mi><mprescripts/><mrow/><mn>35</mn></mmultiscripts></math>"#;
+        test_braille("Dedicon", expr, r#"^35 Cl"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: meetkunde
 mod meetkunde {
     use crate::common::*;
