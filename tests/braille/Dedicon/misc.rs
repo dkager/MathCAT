@@ -1461,6 +1461,14 @@ mod som_en_product {
         test_braille("Dedicon", expr, r#"~Px_i"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 3: Sommatieteken en term in een mstyle (displaystyle): de mstyle heeft geen invloed op de notatie.
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><mstyle displaystyle="true"><mo>∑</mo><mi>W</mi></mstyle><mo>=</mo><mn>0</mn></math>"#;
+        test_braille("Dedicon", expr, r#"~SW = 0"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: weglatingstekens
