@@ -1162,12 +1162,16 @@ mod machten {
     }
 }
 
-// Dedicon examples: indices voor het grondtal (mmultiscripts)
+// Dedicon examples: mmultiscripts
 // A superscript before the base is written before it and ended by a space, as in the European logarithm "^10 log 100"
-// (see website.rs, module logaritmen).
+// (see website.rs, module logaritmen). Examples 1-2.
+// An mmultiscripts with one pair of scripts after the base is laid out as msubsup (MathML Core, section 3.4.3.1),
+// so it gets the same notation as msub/msup/msubsup. Examples 3-8.
+// NOTE: canonicalize.rs could convert this specific case (one subscript and one superscript after the base,
+// no prescripts) into an msubsup; then the Dedicon rules would not need an extra mmultiscripts condition.
 // NOTE: <none/> is not a MathML Core element (W3C Candidate Recommendation, 24 June 2025, section 2.1);
 // MathML Core uses an empty <mrow/> for an empty script position. MathCAT treats both the same.
-mod indices_voor_het_grondtal {
+mod mmultiscripts {
     use crate::common::*;
     use anyhow::Result;
 
@@ -1184,6 +1188,54 @@ mod indices_voor_het_grondtal {
     fn voorbeeld_02() -> Result<()> {
         let expr = r#"<math><mmultiscripts><mi>Cl</mi><mprescripts/><mrow/><mn>35</mn></mmultiscripts></math>"#;
         test_braille("Dedicon", expr, r#"^35 Cl"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Deelstreep na een onderindex: spaties rond de "/" om de index af te sluiten, zoals bij msub.
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><mmultiscripts><mi>x</mi><mi>n</mi><none/></mmultiscripts><mo>/</mo><mi>y</mi></math>"#;
+        test_braille("Dedicon", expr, r#"x_n / y"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Breuk met een onderindex in de teller: geen haakjes, zoals bij msub.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mfrac><mmultiscripts><mi>x</mi><mi>n</mi><none/></mmultiscripts><mi>y</mi></mfrac></math>"#;
+        test_braille("Dedicon", expr, r#"x_n / y"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 5: Macht als grondtal van een macht: haakjes om het grondtal, zoals bij msup.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><msup><mmultiscripts><mi>x</mi><none/><mn>2</mn></mmultiscripts><mn>3</mn></msup></math>"#;
+        test_braille("Dedicon", expr, r#"(x^2)^3"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 6: Samengesteld grondtal: haakjes om het grondtal, zoals bij msub.
+    #[test]
+    fn voorbeeld_06() -> Result<()> {
+        let expr = r#"<math><mmultiscripts><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mn>2</mn><none/></mmultiscripts></math>"#;
+        test_braille("Dedicon", expr, r#"(a + b)_2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 7: Macht als grondtal binnen de mmultiscripts: haakjes om het grondtal, zoals bij msup.
+    #[test]
+    fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><mmultiscripts><msup><mi>x</mi><mn>2</mn></msup><none/><mn>3</mn></mmultiscripts></math>"#;
+        test_braille("Dedicon", expr, r#"(x^2)^3"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 8: Eenheid in een mtext als grondtal, na een getal: een spatie ervoor, zoals bij msup.
+    #[test]
+    fn voorbeeld_08() -> Result<()> {
+        let expr = r#"<math><mn>3</mn><mmultiscripts><mtext>cm</mtext><none/><mn>3</mn></mmultiscripts></math>"#;
+        test_braille("Dedicon", expr, r#"3 cm^3"#)?;
         return Ok(());
     }
 }

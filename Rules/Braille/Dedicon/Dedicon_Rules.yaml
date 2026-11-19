@@ -68,7 +68,8 @@
 # - Only the part that needs parentheses gets them: "(-5 + 3)/11", "21/(3sqrt(2))", "(4 + 2)/(4 - 2)";
 #   a part that is already bracketed (by any pair of fences, as for scripts) gets no extra ones: "(3/x)/5", "8/(3/a)"
 # - Simple parts need no parentheses: a variable, a number, a negative number or variable ("-5/11"),
-#   a root (it has its own parentheses: "7/sqrt(6)", "7/root_3(6)"), a sub- or superscript,
+#   a root (it has its own parentheses: "7/sqrt(6)", "7/root_3(6)"), a sub- or superscript
+#   (also an mmultiscripts with one pair of scripts after the base, laid out as msubsup by MathML Core, section 3.4.3.1),
 #   or a derivative part like "dx" ("dy/dx")
 # - If both parts are simple and one is a sub- or superscript, there are spaces around "/" to end it:
 #   "u_n / v_n", "a^p / q"; next to a part in parentheses no space is needed: "(3a^2)/b^3"
@@ -78,10 +79,10 @@
   tag: mfrac
   match: "."
   variables:
-  - SimpleNumerator: "*[1][self::m:mi or self::m:mn or self::m:msub or self::m:msup or self::m:msubsup or self::m:msqrt or self::m:mroot or
+  - SimpleNumerator: "*[1][self::m:mi or self::m:mn or self::m:msub or self::m:msup or self::m:msubsup or (self::m:mmultiscripts and count(*)=3 and not(m:mprescripts)) or self::m:msqrt or self::m:mroot or
                            (self::m:mrow and count(*)=2 and *[1][self::m:mo and (.='-' or .='\u2212')] and *[2][self::m:mn or self::m:mi]) or
                            (self::m:mrow and count(*)=3 and *[1]='d' and *[2]='\u2062' and *[3][self::m:mi])]"
-  - SimpleDenominator: "*[2][self::m:mi or self::m:mn or self::m:msub or self::m:msup or self::m:msubsup or self::m:msqrt or self::m:mroot or
+  - SimpleDenominator: "*[2][self::m:mi or self::m:mn or self::m:msub or self::m:msup or self::m:msubsup or (self::m:mmultiscripts and count(*)=3 and not(m:mprescripts)) or self::m:msqrt or self::m:mroot or
                              (self::m:mrow and count(*)=2 and *[1][self::m:mo and (.='-' or .='\u2212')] and *[2][self::m:mn or self::m:mi]) or
                              (self::m:mrow and count(*)=3 and *[1]='d' and *[2]='\u2062' and *[3][self::m:mi])]"
   - After: "ancestor-or-self::*[following-sibling::*][1]"    # nearest element (this one or a row around it) with something after it
@@ -99,7 +100,7 @@
           if: "$SimpleDenominator or *[2][self::m:mrow and IsBracketed(., '', '')]"
           then: [x: "*[2]"]
           else: [t: "(", x: "*[2]", t: ")"]
-    - else_if: "*[self::m:msub or self::m:msup or self::m:msubsup]"
+    - else_if: "*[self::m:msub or self::m:msup or self::m:msubsup or self::m:mmultiscripts]"
       then: [x: "*[1]", t: "𝐰/𝐰", x: "*[2]"]
       else: [x: "*[1]", t: "/", x: "*[2]"]
   - test:
@@ -205,7 +206,7 @@
                 parent::m:mrow/preceding-sibling::*[1][self::m:mo and IsInDefinition(., 'Braille', 'Quantifiers')]"
       then: [t: "𝐰"]
     - else_if: "IsInDefinition(., 'Braille', 'DivisionSlash') and
-                (preceding-sibling::*[1] | following-sibling::*[1])[self::m:msub or self::m:msup or self::m:msubsup]"
+                (preceding-sibling::*[1] | following-sibling::*[1])[self::m:msub or self::m:msup or self::m:msubsup or (self::m:mmultiscripts and count(*)=3 and not(m:mprescripts))]"
       then: [t: "𝐰", x: "text()", t: "𝐰"]
       else: [x: "text()"]
 
@@ -314,7 +315,7 @@
   replace:
   - test:
       if: "(count($Before | .) = 1 or $Before[self::m:mrow] or
-            ($Before[self::m:msup or self::m:msub or self::m:msubsup] and count($Before/*[1] | .) = 1)) and
+            ($Before[self::m:msup or self::m:msub or self::m:msubsup or (self::m:mmultiscripts and count(*)=3 and not(m:mprescripts))] and count($Before/*[1] | .) = 1)) and
            $Before[parent::m:mrow or parent::m:math] and
            not(ancestor::*[not(self::m:mrow)][count(. | $Before/descendant::*) = count($Before/descendant::*)]) and
            $Before/preceding-sibling::*[1][not(self::m:mtext or (self::m:mo and IsInDefinition(., 'Braille', 'OpeningBrackets')))]"
@@ -394,7 +395,7 @@
 #   anything else is compound and gets parentheses: "5^(2 + 2)", "x_(n + 1)", "e^(x_1)", "9^(1/2)"
 # - With both a sub- and a superscript, a space ends the subscript before the "^": "A_1 ^2"
 #   (also when the base of a superscript is itself a subscript, as some authors write x_n ^2)
-# - A base that is itself a superscript (msup/msubsup), a fraction or an unbracketed group gets parentheses:
+# - A base that is itself a superscript (msup/msubsup/mmultiscripts), a fraction or an unbracketed group gets parentheses:
 #   "(5^2)^x"; a subscript as base gets no parentheses but a space before the "^" (see above)
 -
   name: default
@@ -402,7 +403,7 @@
   match: "."
   replace:
   - test:
-      if: "*[1][self::m:msup or self::m:msubsup or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '', '')))]"
+      if: "*[1][self::m:msup or self::m:msubsup or self::m:mmultiscripts or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '', '')))]"
       then: [t: "(", x: "*[1]", t: ")"]
       else: [x: "*[1]"]
   - test:
@@ -464,7 +465,7 @@
   match: "."
   replace:
   - test:
-      if: "*[1][self::m:msup or self::m:msubsup or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '', '')))]"
+      if: "*[1][self::m:msup or self::m:msubsup or self::m:mmultiscripts or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '', '')))]"
       then: [t: "(", x: "*[1]", t: ")"]
       else: [x: "*[1]"]
   - test:
@@ -488,7 +489,8 @@
 # Dedicon rule for scripts before (and after) a base, used for the European logarithm notation:
 #   superscript before the base, then a space that ends it: "^10 log 100", "^g log(a)"
 # Scripts after the base are written as for msub/msup/msubsup: "_" sub, then (after a space) "^" sup
-# Simple scripts are written as is, compound scripts get parentheses (same tests as the script rule above)
+# Simple scripts are written as is, compound scripts get parentheses (same tests as the script rule above),
+#   and so does a compound base: "(a + b)_2"
 # Structure follows the mmultiscripts rule in ../ASCIIMath/ASCIIMath_Rules.yaml, including the variables;
 #   only the first pair of pre- and postscripts is formatted, further pairs are written out as is (as in ASCIIMath)
 -
@@ -528,7 +530,10 @@
           if: "count($Prescripts) > 2"   # give up and just write them out so at least the content is there
           then: [x: "$Prescripts[position() > 2]"]
       - t: "𝐰"    # a space ends the prescript: "^10 log"
-  - x: "*[1]"
+  - test:
+      if: "*[1][self::m:msup or self::m:msubsup or self::m:mmultiscripts or self::m:mfrac or (self::m:mrow and not(IsBracketed(., '', '')))]"
+      then: [t: "(", x: "*[1]", t: ")"]
+      else: [x: "*[1]"]
   - test:
       if: "$Postscripts"
       then:
