@@ -504,6 +504,39 @@ mod accenten {
         test_braille("Dedicon", expr, r#"x^2 {-z"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 7: Vectorpijl boven een variabele met index: de index staat onder de pijl, dus haakjes.
+    // NOTE: these parentheses still have to be discussed with Dedicon.
+    #[test]
+    fn voorbeeld_07() -> Result<()> {
+        let expr = r#"<math><mover><msub><mi>F</mi><mi>res</mi></msub><mo>→</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"{-->(F_res)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 8: Index bij een variabele met vectorpijl: alleen de variabele staat onder de pijl.
+    #[test]
+    fn voorbeeld_08() -> Result<()> {
+        let expr = r#"<math><msub><mover><mi>F</mi><mo>→</mo></mover><mi>res</mi></msub></math>"#;
+        test_braille("Dedicon", expr, r#"{-->F_res"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 9: Streep boven een macht (complex geconjugeerde van z^2): haakjes om de macht.
+    #[test]
+    fn voorbeeld_09() -> Result<()> {
+        let expr = r#"<math><mover><msup><mi>z</mi><mn>2</mn></msup><mo>¯</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"{-(z^2)"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 10: Streep boven een breuk: haakjes om de breuk.
+    #[test]
+    fn voorbeeld_10() -> Result<()> {
+        let expr = r#"<math><mover><mfrac><mi>a</mi><mi>b</mi></mfrac><mo>¯</mo></mover></math>"#;
+        test_braille("Dedicon", expr, r#"{-(a/b)"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: onbekende elementen

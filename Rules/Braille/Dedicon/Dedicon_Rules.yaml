@@ -330,6 +330,7 @@
 #   overbar (complex conjugate) "{-z", "{-2i"; vector arrow "{-->a", "{-->OA"; hat "{^x"
 # If the expression would contain spaces, it gets parentheses to show what is under the mark:
 #   "{-(a + bi)", "{-->(F_1 + F_2)", "{^(a + b)"
+# A script or fraction under the mark also gets parentheses: "{-->(F_res)", "{-(z^2)", "{-(a/b)"
 # Based on the accents rule in ../ASCIIMath/ASCIIMath_Rules.yaml (Accents is in definitions.yaml)
 -
   name: accents
@@ -339,7 +340,7 @@
   - t: "{"
   - x: "DefinitionValue(*[2], 'Braille', 'Accents')"
   - test:
-      if: "*[1][IsBracketed(., '', '') or not(descendant-or-self::m:mo[IsInDefinition(., 'Braille', 'AlwaysSpacing') or IsInDefinition(., 'Braille', 'SpaceAfter') or (IsInDefinition(., 'Braille', 'AddSpacing') and preceding-sibling::* and following-sibling::*)] or descendant-or-self::m:mtext)]"
+      if: "*[1][IsBracketed(., '', '') or not(self::m:msub or self::m:msup or self::m:msubsup or self::m:mmultiscripts or self::m:mfrac or descendant-or-self::m:mo[IsInDefinition(., 'Braille', 'AlwaysSpacing') or IsInDefinition(., 'Braille', 'SpaceAfter') or (IsInDefinition(., 'Braille', 'AddSpacing') and preceding-sibling::* and following-sibling::*)] or descendant-or-self::m:mtext)]"
       then: [x: "*[1]"]
       else: [t: "(", x: "*[1]", t: ")"]
 
