@@ -1188,6 +1188,54 @@ mod indices_voor_het_grondtal {
     }
 }
 
+// Dedicon examples: functienaam als index
+// A function name that is itself a sub- or superscript is a label, not a function: it gets no spaces ("I_max").
+// A function name with its argument in a script keeps its space ("e^(sin x)").
+mod functienaam_als_index {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Functienaam als onderindex: geen spatie na de "_".
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><msub><mi>I</mi><mi>max</mi></msub></math>"#;
+        test_braille("Dedicon", expr, r#"I_max"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Als voorbeeld 1, maar de functienaam als enige in een <mrow>: dezelfde notatie.
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><msub><mi>I</mi><mrow><mi>max</mi></mrow></msub></math>"#;
+        test_braille("Dedicon", expr, r#"I_max"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Functienaam als onderindex met een exponent, in een formule (uit het natuurkundeboek, ingekort).
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><msubsup><mi>v</mi><mrow><mi>max</mi></mrow><mn>2</mn></msubsup><mo>=</mo><mn>3,3</mn></math>"#;
+        test_braille("Dedicon", expr, r#"v_max ^2 = 3,3"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 4: Functienamen als index in een mmultiscripts met meer dan drie kinderen: geen spaties.
+    #[test]
+    fn voorbeeld_04() -> Result<()> {
+        let expr = r#"<math><mmultiscripts><mi>E</mi><mi>max</mi><mn>2</mn><mprescripts/><mi>min</mi><none/></mmultiscripts></math>"#;
+        test_braille("Dedicon", expr, r#"_min E_max ^2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 5: Functienaam met argument in een exponent: de spatie na de functienaam blijft.
+    #[test]
+    fn voorbeeld_05() -> Result<()> {
+        let expr = r#"<math><msup><mi>e</mi><mrow><mi>sin</mi><mo>&#x2061;</mo><mi>x</mi></mrow></msup></math>"#;
+        test_braille("Dedicon", expr, r#"e^(sin x)"#)?;
+        return Ok(());
+    }
+}
+
 // Dedicon examples: meetkunde
 mod meetkunde {
     use crate::common::*;
@@ -1273,13 +1321,12 @@ mod gradenteken {
         return Ok(());
     }
 
-    /// Voorbeeld 5: Hoek in graden tussen haakjes, na een weggelaten linkerlid.
-    /// NOTE: "=" always gets a space on both sides, also directly after an opening bracket. To discuss with Dedicon:
-    /// should this be "( = 90 gr)" or "(= 90 gr)"?
+    /// Voorbeeld 5: Hoek in graden tussen haakjes, na een weggelaten linkerlid: geen spatie na het openingshaakje.
+    /// NOTE: our choice is "(= 90 gr)": no space directly after an opening bracket. To confirm with Dedicon.
     #[test]
     fn voorbeeld_05() -> Result<()> {
         let expr = r#"<math><mfenced open="(" close=")" separators=""><mo>=</mo><mn>90</mn><mo>°</mo></mfenced></math>"#;
-        test_braille("Dedicon", expr, r#"( = 90 gr)"#)?;
+        test_braille("Dedicon", expr, r#"(= 90 gr)"#)?;
         return Ok(());
     }
 }
@@ -1347,6 +1394,63 @@ mod relatietekens {
     fn voorbeeld_07() -> Result<()> {
         let expr = r#"<math><mrow><mi>F</mi><mo>∝</mo><mi>m</mi></mrow></math>"#;
         test_braille("Dedicon", expr, r#"F =ev m"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 8: Identiek aan: "==", met spaties eromheen zoals bij de andere relatietekens.
+    #[test]
+    fn voorbeeld_08() -> Result<()> {
+        let expr = r#"<math><mrow><mi>a</mi><mo>≡</mo><mi>b</mi></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"a == b"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 9: Drievoudige binding in een structuurformule, met ≡ en de bindingen in een <mi> (uit het scheikundeboek).
+    #[test]
+    fn voorbeeld_09() -> Result<()> {
+        let expr = r#"<math><mi>H</mi><mi>-</mi><mi>C</mi><mi>≡</mi><mi>C</mi><mi>-</mi><mi>H</mi></math>"#;
+        test_braille("Dedicon", expr, r#"H - C == C - H"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 10: Deelt (U+2223): een verticale streep, met spaties eromheen zoals bij de andere relatietekens.
+    #[test]
+    fn voorbeeld_10() -> Result<()> {
+        let expr = r#"<math><mrow><mn>3</mn><mo>∣</mo><mn>12</mn></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"3 | 12"#)?;
+        return Ok(());
+    }
+}
+
+// Dedicon examples: spaties bij haakjes en komma's
+// Directly after an opening bracket and before a closing bracket there is never a space.
+// Before a comma there is no space, also not after a script that ends in an operator (a charge).
+// The comma at the start of a Dedicon symbol keeps its space: "P ,= Q" (see module logica).
+mod spaties_bij_haakjes_en_kommas {
+    use crate::common::*;
+    use anyhow::Result;
+
+    /// Voorbeeld 1: Temperatuur in graden Celsius tussen haakjes: geen spatie na het openingshaakje (uit het scheikundeboek).
+    #[test]
+    fn voorbeeld_01() -> Result<()> {
+        let expr = r#"<math><mi>T</mi><mrow><mo>(</mo><mo>°</mo><mi>C</mi><mo>)</mo></mrow><mo>=</mo><mi>T</mi><mo>(</mo><mi>K</mi><mo>)</mo><mo>-</mo><mn>273</mn></math>"#;
+        test_braille("Dedicon", expr, r#"T(grC) = T(K) - 273"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 2: Ion met een lading tussen vierkante haken: geen spatie voor het sluithaakje (uit het scheikundeboek).
+    #[test]
+    fn voorbeeld_02() -> Result<()> {
+        let expr = r#"<math><mo>[</mo><msub><mi>HCO</mi><mn>3</mn></msub><msup><mrow/><mo>-</mo></msup><mo>]</mo></math>"#;
+        test_braille("Dedicon", expr, r#"[HCO_3^-]"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 3: Ionen met een lading, gescheiden door een komma: geen spatie voor de komma (uit het scheikundeboek).
+    #[test]
+    fn voorbeeld_03() -> Result<()> {
+        let expr = r#"<math><msup><mi>Au</mi><mrow><mo>+</mo></mrow></msup><mo>,</mo><msup><mi>Au</mi><mrow><mn>3</mn><mrow><mo>+</mo></mrow></mrow></msup></math>"#;
+        test_braille("Dedicon", expr, r#"Au^+, Au^(3+)"#)?;
         return Ok(());
     }
 }

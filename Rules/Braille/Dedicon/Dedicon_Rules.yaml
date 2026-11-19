@@ -250,6 +250,18 @@
 #   Dedicon page. That is ambiguous (it can also be read as (^g log a)/b); the linear notation on that page
 #   writes "^g log(a/b)". Should such an argument always get brackets?
 #   (see tests/braille/Dedicon/website.rs, logaritmen::voorbeeld_06)
+# Dedicon rule: a function name that is itself a script (not the base) of msub/msup/msubsup/mmultiscripts gets no
+#   spaces, also when it is the only child of an mrow there: "I_max", "v_max ^2"
+#   It is not a function there, but a label; any number of scripts in mmultiscripts is fine.
+#   A function name with its argument in a script is in a row and still gets its space: "e^(sin x)"
+-
+  name: function-name-as-script
+  tag: [mi, mtext]
+  match: "IsInDefinition(., 'Braille', 'FunctionNames') and
+          (self::* | parent::m:mrow[count(*)=1])[preceding-sibling::* and
+            (parent::m:msub or parent::m:msup or parent::m:msubsup or parent::m:mmultiscripts)]"
+  replace: [x: "text()"]
+
 -
   name: named-functions
   tag: [mi, mtext]

@@ -147,8 +147,8 @@
  - "≈": [t: "=ong"]                          # 0x2248 almost equal to
  - "≉": [t: "=nietOng"]                      # 0x2249 not almost equal to
  - "∝": [t: "=ev"]                           # 0x221d proportional to
- - "≡": [t: "=="]                            # 0x2261 identical to (no spaces around it in the Dedicon list)
- - "∣": [t: "|"]                             # 0x2223 divides, written as a vertical line (no spaces around it in the Dedicon list)
+ - "≡": [t: "=="]                            # 0x2261 identical to
+ - "∣": [t: "|"]                             # 0x2223 divides, written as a vertical line
 # NOTE: "estimates" needs discussion: an older Dedicon symbol list writes "~", the current conversion "=^"
  - "≙": [t: "=^"]                            # 0x2259 estimates
  - "∑": [t: "~S"]                            # 0x2211 n-ary summation
