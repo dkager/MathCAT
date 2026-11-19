@@ -160,7 +160,10 @@
  - "¥": [t: "yen"]                           # 0xa5 yen sign
  - "ƒ": [t: "f"]                             # 0x192 latin small letter f with hook (florin sign)
 
-# superscript digits (e.g. "m²" typed as one mi): written as a power, like the msup rule: "m^2"
+# superscript digits: written as a power: "m^2", also on their own: "^3"
+#   Canonicalize often makes them a superscript (msup or mmultiscripts), so the script rule writes a "^" as well;
+#   cleanup turns the repeated "^" into one (see Dedicon_cleanup in src/braille.rs)
+ - "¹": [t: "^1"]                            # 0xb9 superscript one
  - "²": [t: "^2"]                            # 0xb2 superscript two
  - "³": [t: "^3"]                            # 0xb3 superscript three
 

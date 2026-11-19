@@ -3212,14 +3212,17 @@ fn ASCIIMath_cleanup(_pref_manager: Ref<PreferenceManager>, raw_braille: String)
 /// A removable space before a comma always goes: "Au^+, Au^(3+)"; a kept space (𝐰) stays, as in "P ,= Q".
 /// Directly after an opening bracket and before a closing bracket no space stays at all, also not a kept one:
 ///   "(= 90 gr)", "T(grC)"
+/// A repeated "^" becomes one: a superscript digit (unicode.yaml "^3") in a superscript gives "^^3": "m^3"
 #[allow(non_snake_case)]
 fn Dedicon_cleanup(raw_braille: String) -> String {
     static REMOVE_SPACE_BEFORE_COMMA: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"𝐖+,").unwrap());
+    static REPEATED_CARET: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\^{2,}").unwrap());
     static REMOVE_SPACE_BEFORE_OP: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(\w) +([^\w"~{-]|_)"#).unwrap());
     static REMOVE_SPACE_AFTER_OP: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"([^\w^,;.)\]"-]) +([\w~{])"#).unwrap());
     static REMOVE_SPACE_IN_BRACKETS: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"([(\[{]) +| +([)\]}])").unwrap());
     static COLLAPSE_SPACES: LazyLock<Regex> = LazyLock::new(|| Regex::new(r" +").unwrap());
-    let result = REMOVE_SPACE_BEFORE_COMMA.replace_all(&raw_braille, ",");
+    let result = REPEATED_CARET.replace_all(&raw_braille, "^");
+    let result = REMOVE_SPACE_BEFORE_COMMA.replace_all(&result, ",");
     let result = COLLAPSE_SPACES.replace_all(&result.replace('𝐖', " "), " ").to_string();
     let result = REMOVE_SPACE_IN_BRACKETS.replace_all(&result, "$1$2");
     let result = REMOVE_SPACE_BEFORE_OP.replace_all(&result, "$1$2");

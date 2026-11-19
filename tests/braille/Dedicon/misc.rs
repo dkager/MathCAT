@@ -1160,7 +1160,23 @@ mod machten {
         test_braille("Dedicon", expr, r#"(2sqrt(3))^2"#)?;
         return Ok(());
     }
-}
+
+    /// Voorbeeld 9: Superscript-cijfer ³ als <mo> na een eenheid: één "^", zoals bij msup.
+    /// MathCAT maakt er een msup van.
+    #[test]
+    fn voorbeeld_09() -> Result<()> {
+        let expr = r#"<math><mn>343</mn><mi>cm</mi><mo>³</mo></math>"#;
+        test_braille("Dedicon", expr, r#"343cm^3"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 10: Superscript-cijfer ³ als <mn> na een getal: één "^". MathCAT maakt er een mmultiscripts van.
+    #[test]
+    fn voorbeeld_10() -> Result<()> {
+        let expr = r#"<math><mn>10</mn><mn>³</mn><mo>=</mo><mn>1000</mn></math>"#;
+        test_braille("Dedicon", expr, r#"10^3 = 1000"#)?;
+        return Ok(());
+    }}
 
 // Dedicon examples: mmultiscripts
 // A superscript before the base is written before it and ended by a space, as in the European logarithm "^10 log 100"
