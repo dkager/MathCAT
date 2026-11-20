@@ -3207,7 +3207,7 @@ fn ASCIIMath_cleanup(_pref_manager: Ref<PreferenceManager>, raw_braille: String)
 
 /// Like ASCIIMath_cleanup, but "~" (Greek letter), "{" (accent) and a unary "-" start an operand like a letter or digit,
 /// so the removable space (𝐖) before them stays: "x^2 ~p", "x^2 {-z", "sin -x".
-/// A removable space after a point or a minus also stays: "opp. vloer", "- 1/2"; after "}" it goes: "lim{x --> 0}1/x".
+/// A removable space after a point or a minus also stays: "opp. vloer", "e^- y"; after "}" it goes: "lim{x --> 0}1/x".
 /// Inside brackets a removable space always goes: "sqrt((x + 3)/(x - 1))"
 /// A removable space before a comma always goes: "Au^+, Au^(3+)"; a kept space (𝐰) stays, as in "P ,= Q".
 /// Directly after an opening bracket and before a closing bracket no space stays at all, also not a kept one:

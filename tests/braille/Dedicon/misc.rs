@@ -273,6 +273,24 @@ mod samengestelde_constructies {
         test_braille("Dedicon", expr, r#"(n/(n - 2))/(1/(n + 2)) - n = (n/(n - 2) * (n - 2)(n + 2))/(1/(n + 2) * (n - 2)(n + 2)) - n = (n(n + 2))/(n - 2) - (n(n - 2))/(n - 2) = (n(n + 2) - n(n - 2))/(n - 2)"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 26: Macht met een samengestelde exponent als teller: de haakjes sluiten de exponent al af,
+    /// dus geen spaties om de "/".
+    #[test]
+    fn voorbeeld_26() -> Result<()> {
+        let expr = r#"<math><mfrac><msup><mi>x</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msup><mn>2</mn></mfrac></math>"#;
+        test_braille("Dedicon", expr, r#"x^(n + 1)/2"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 27: Samengestelde onderindex met exponent: de haakjes sluiten de onderindex al af,
+    /// dus geen spatie voor de "^".
+    #[test]
+    fn voorbeeld_27() -> Result<()> {
+        let expr = r#"<math><msubsup><mi>x</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></msubsup></math>"#;
+        test_braille("Dedicon", expr, r#"x_(n + 1)^2"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: logica
@@ -962,11 +980,11 @@ mod breuken {
     }
 
     /// Voorbeeld 5: Negatieve breuk.
-    /// NOTE: a minus sign before a fraction is separated from it by a space ("- 16/15").
+    /// A minus sign before a fraction gets no space ("-16/15"): -(16/15) and (-16)/15 have the same value.
     #[test]
     fn voorbeeld_05() -> Result<()> {
         let expr = r#"<math><mo>-</mo><mfrac><mrow><mn>16</mn></mrow><mrow><mn>15</mn></mrow></mfrac><mo>=</mo><mrow><mo>-</mo><mn>1</mn></mrow><mfrac><mn>1</mn><mrow><mn>15</mn></mrow></mfrac></math>"#;
-        test_braille("Dedicon", expr, r#"- 16/15 = -1 1/15"#)?;
+        test_braille("Dedicon", expr, r#"-16/15 = -1 1/15"#)?;
         return Ok(());
     }
 
@@ -1137,11 +1155,11 @@ mod machten {
     }
 
     /// Voorbeeld 6: Macht van een negatief getal tussen haakjes, in een langere berekening. Het minteken voor de breuk
-    /// krijgt een spatie; mfenced met separators="" krijgt geen komma's naast het minteken.
+    /// krijgt geen spatie; mfenced met separators="" krijgt geen komma's naast het minteken.
     #[test]
     fn voorbeeld_06() -> Result<()> {
         let expr = r#"<math display="inline"><mrow><mrow><mi>f</mi><mfenced open="(" close=")" separators=""><mo>-</mo><mn>8</mn></mfenced><mo>=</mo><mo>-</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>⋅</mo><msup><mfenced open="(" close=")" separators=""><mo>-</mo><mn>8</mn></mfenced><mn>2</mn></msup><mo>+</mo><mn>2</mn><mo>⋅</mo><mn>-8</mn><mo>+</mo><mn>1</mn><mo>=</mo><mn>-47</mn></mrow></mrow></math>"#;
-        test_braille("Dedicon", expr, r#"f(-8) = - 1/2 * (-8)^2 + 2 * -8 + 1 = -47"#)?;
+        test_braille("Dedicon", expr, r#"f(-8) = -1/2 * (-8)^2 + 2 * -8 + 1 = -47"#)?;
         return Ok(());
     }
 
@@ -1176,7 +1194,16 @@ mod machten {
         let expr = r#"<math><mn>10</mn><mn>³</mn><mo>=</mo><mn>1000</mn></math>"#;
         test_braille("Dedicon", expr, r#"10^3 = 1000"#)?;
         return Ok(());
-    }}
+    }
+
+    /// Voorbeeld 11: Samengestelde exponent gevolgd door een variabele: de haakjes sluiten de exponent af, dus geen spatie.
+    #[test]
+    fn voorbeeld_11() -> Result<()> {
+        let expr = r#"<math><msup><mi>x</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msup><mi>y</mi></math>"#;
+        test_braille("Dedicon", expr, r#"x^(n + 1)y"#)?;
+        return Ok(());
+    }
+}
 
 // Dedicon examples: mmultiscripts
 // A superscript before the base is written before it and ended by a space, as in the European logarithm "^10 log 100"
@@ -1252,6 +1279,14 @@ mod mmultiscripts {
     fn voorbeeld_08() -> Result<()> {
         let expr = r#"<math><mn>3</mn><mmultiscripts><mtext>cm</mtext><none/><mn>3</mn></mmultiscripts></math>"#;
         test_braille("Dedicon", expr, r#"3 cm^3"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 9: Onder- en bovenindex vóór het grondtal: een spatie sluit de onderindex af, net als in "A_1 ^2".
+    #[test]
+    fn voorbeeld_09() -> Result<()> {
+        let expr = r#"<math><mmultiscripts><mi>X</mi><mprescripts/><mn>2</mn><mn>3</mn></mmultiscripts></math>"#;
+        test_braille("Dedicon", expr, r#"_2 ^3 X"#)?;
         return Ok(());
     }
 }
