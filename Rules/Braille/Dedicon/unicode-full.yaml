@@ -45,6 +45,9 @@
  - "Ü": [t: "Ü"]
  - "Ç": [t: "Ç"]
 
+# double exclamation mark: MathCAT merges "!!" (double factorial) into it; written as two exclamation marks: "n!!"
+ - "‼": [t: "!!"]                            # 0x203c double exclamation mark
+
 # Mathematical letters and digits in other styles (bold, italic, script, fraktur, double-struck, sans-serif,
 #   monospace), as MathCAT makes them from mathvariant: written as the plain letter or digit, because Dedicon has
 #   no notation for font styles (as for "ℕ" -> "N" in unicode.yaml). Greek letters get "~" as in unicode.yaml.

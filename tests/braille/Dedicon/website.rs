@@ -275,12 +275,12 @@ mod limieten {
     }
 
     /// Voorbeeld 4: Limiet van een samengestelde breuk.
-    /// NOTE: the website writes (1)/(1,01^n). The fraction rule writes a fraction with a sub- or superscript
-    /// with spaces around "/" instead (as in breuken 10 and 12: u_n / v_n, a^p / q); the fractions page allows both.
+    /// NOTE: the website writes (1)/(1,01^n). The fraction rule only puts spaces around "/" to end a sub- or
+    /// superscript in the numerator (as in breuken 10 and 12: u_n / v_n, a^p / q); a power in the denominator needs none.
     #[test]
     fn voorbeeld_04() -> Result<()> {
         let expr = r#"<math><munder><mo>lim</mo> <mrow><mi>n</mi> <mo>→</mo> <mi>∞</mi> </mrow></munder><mo>&#x2061;</mo> <mfrac><mn>1</mn> <msup><mn>1,01</mn> <mi>n</mi> </msup></mfrac><mo>=</mo> <mn>0</mn></math>"#;
-        test_braille("Dedicon", expr, r#"lim{n --> inf}1 / 1,01^n = 0"#)?;
+        test_braille("Dedicon", expr, r#"lim{n --> inf}1/1,01^n = 0"#)?;
         return Ok(());
     }
 

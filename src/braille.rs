@@ -3207,7 +3207,7 @@ fn ASCIIMath_cleanup(_pref_manager: Ref<PreferenceManager>, raw_braille: String)
 
 /// Like ASCIIMath_cleanup, but "~" (Greek letter), "{" (accent) and a unary "-" start an operand like a letter or digit,
 /// so the removable space (𝐖) before them stays: "x^2 ~p", "x^2 {-z", "sin -x".
-/// A removable space after a point or a minus also stays: "opp. vloer", "e^- y"; after "}" it goes: "lim{x --> 0}1/x".
+/// A removable space after a point also stays: "opp. vloer"; after "}" it goes: "lim{x --> 0}1/x".
 /// Inside brackets a removable space always goes: "sqrt((x + 3)/(x - 1))"
 /// A removable space before a comma always goes: "Au^+, Au^(3+)"; a kept space (𝐰) stays, as in "P ,= Q".
 /// Directly after an opening bracket and before a closing bracket no space stays at all, also not a kept one:
@@ -3218,7 +3218,7 @@ fn Dedicon_cleanup(raw_braille: String) -> String {
     static REMOVE_SPACE_BEFORE_COMMA: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"𝐖+,").unwrap());
     static REPEATED_CARET: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\^{2,}").unwrap());
     static REMOVE_SPACE_BEFORE_OP: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"(\w) +([^\w"~{-]|_)"#).unwrap());
-    static REMOVE_SPACE_AFTER_OP: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"([^\w^,;.)\]"-]) +([\w~{])"#).unwrap());
+    static REMOVE_SPACE_AFTER_OP: LazyLock<Regex> = LazyLock::new(|| Regex::new(r#"([^\w^,;.)\]"]) +([\w~{])"#).unwrap());
     static REMOVE_SPACE_IN_BRACKETS: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"([(\[{]) +| +([)\]}])").unwrap());
     static COLLAPSE_SPACES: LazyLock<Regex> = LazyLock::new(|| Regex::new(r" +").unwrap());
     let result = REPEATED_CARET.replace_all(&raw_braille, "^");

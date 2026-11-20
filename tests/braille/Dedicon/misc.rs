@@ -1024,6 +1024,15 @@ mod breuken {
         test_braille("Dedicon", expr, r#"(3x)/2"#)?;
         return Ok(());
     }
+
+    /// Voorbeeld 10: Breuk voor een absolute waarde: een spatie, net als voor een openingshaakje, zodat de "|" niet bij
+    /// de noemer lijkt te horen.
+    #[test]
+    fn voorbeeld_10() -> Result<()> {
+        let expr = r#"<math><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mo>|</mo><mi>x</mi><mo>|</mo></mrow></math>"#;
+        test_braille("Dedicon", expr, r#"1/2 |x|"#)?;
+        return Ok(());
+    }
 }
 
 // Dedicon examples: wortels
@@ -1201,6 +1210,15 @@ mod machten {
     fn voorbeeld_11() -> Result<()> {
         let expr = r#"<math><msup><mi>x</mi><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow></msup><mi>y</mi></math>"#;
         test_braille("Dedicon", expr, r#"x^(n + 1)y"#)?;
+        return Ok(());
+    }
+
+    /// Voorbeeld 12: Exponent die een operator is (complex geconjugeerde), gevolgd door een variabele: de spatie die de
+    /// exponent afsluit blijft staan.
+    #[test]
+    fn voorbeeld_12() -> Result<()> {
+        let expr = r#"<math><msup><mi>z</mi><mo>*</mo></msup><mi>w</mi></math>"#;
+        test_braille("Dedicon", expr, r#"z^* w"#)?;
         return Ok(());
     }
 }
