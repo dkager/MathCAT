@@ -275,12 +275,13 @@ fn simplespeak_interval_names_are_japanese() -> Result<()> {
     return Ok(());
 }
 
-/// 循環節 is the dictionary term for the repeating digits of a recurring decimal.
+/// 循環節 is the dictionary term for the repeating digits of a recurring decimal; Open JTalk reads
+/// the kanji ジュンカンブシ, so 節 is written せつ.
 #[test]
 fn repeating_decimal_says_junkansetsu() -> Result<()> {
     let expr = "<math><mn>0.1</mn><mo>&#x2062;</mo><mover><mn>23</mn><mo>¯</mo></mover></math>";
-    test("ja", "SimpleSpeak", expr, "0.1 循環節 2 3")?;
-    test("ja", "ClearSpeak", expr, "0.1 循環節 2 3")?;
+    test("ja", "SimpleSpeak", expr, "0.1 循環せつ 2 3")?;
+    test("ja", "ClearSpeak", expr, "0.1 循環せつ 2 3")?;
     return Ok(());
 }
 
@@ -577,6 +578,42 @@ fn rpm_unit() -> Result<()> {
     return Ok(());
 }
 
+/// The squared katakana words (U+3300-3357), the era names and ㍿ had no entry, so the character itself
+/// was passed on and Open JTalk said nothing for most of them (㌔, ㍿); ㏂ was read アトメートル, and
+/// 毎 written with no space between two units was read ゴト.
+#[test]
+fn cjk_compatibility_squares() -> Result<()> {
+    let expr = "<math><mn>10</mn><mi>&#x3314;</mi></math>";
+    test("ja", "SimpleSpeak", expr, "10 キロ")?;
+    let expr = "<math><mi>&#x337b;</mi><mn>31</mn></math>";
+    test("ja", "SimpleSpeak", expr, "平成 31")?;
+    let expr = "<math><mi>&#x337f;</mi></math>";
+    test("ja", "SimpleSpeak", expr, "株式会社")?;
+    let expr = "<math><mi>&#x33c2;</mi></math>";
+    test("ja", "SimpleSpeak", expr, "午前")?;
+    let expr = "<math><mn>3</mn><mi>&#x33de;</mi></math>";
+    test("ja", "SimpleSpeak", expr, "3 ボルト 毎 メートル")?;
+    return Ok(());
+}
+
+/// The telegraph symbols for months, hours and days had no entry. The hours decompose to 点, which is
+/// "o'clock" in Chinese but てん ("point") in Japanese, so 0点 would be れいてん; they are spoken with 時.
+/// Open JTalk reads 1日 alone as イチニチ ("one day"), so the first day is ついたち.
+#[test]
+fn telegraph_symbols() -> Result<()> {
+    let expr = "<math><mi>&#x32c3;</mi></math>";
+    test("ja", "SimpleSpeak", expr, "4月")?;
+    let expr = "<math><mi>&#x3358;</mi></math>";
+    test("ja", "SimpleSpeak", expr, "零時")?;
+    let expr = "<math><mi>&#x3366;</mi></math>";
+    test("ja", "SimpleSpeak", expr, "14時")?;
+    let expr = "<math><mi>&#x33e0;</mi></math>";
+    test("ja", "SimpleSpeak", expr, "ついたち")?;
+    let expr = "<math><mi>&#x33f3;</mi></math>";
+    test("ja", "SimpleSpeak", expr, "20日")?;
+    return Ok(());
+}
+
 /// The negation sign is ノット. The seed said コメントはありません -- "there are no
 /// comments" -- because the English source word is "not".
 #[test]
@@ -625,34 +662,47 @@ fn geometry_verbose_from_to() -> Result<()> {
     return Ok(());
 }
 
-/// The measure of an angle is 「角 ABC の大きさ」: Japanese names the angle first.
+/// The measure of an angle is 「角 ABC の大きさ」: Japanese names the angle first. 角 is written
+/// かく because Open JTalk reads 角 before a pause as スミ (∠ABC = 90° was スミ, ...).
 /// 「角の大きさ ABC」 kept the English order.
 #[test]
 fn measure_of_angle() -> Result<()> {
     let expr = "<math><mrow intent='measure-of-angle($x,$y,$z)'><mi arg='x'>x</mi><mi arg='y'>y</mi><mi arg='z'>z</mi></mrow></math>";
-    test("ja", "ClearSpeak", expr, "角 x y z の大きさ")?;
-    test_prefs("ja", "ClearSpeak", vec![("Verbosity", "Verbose")], expr, "角 x y z の大きさ")?;
-    test("ja", "SimpleSpeak", expr, "角 x y z の大きさ")?;
+    test("ja", "ClearSpeak", expr, "かく x y z の大きさ")?;
+    test_prefs("ja", "ClearSpeak", vec![("Verbosity", "Verbose")], expr, "かく x y z の大きさ")?;
+    test("ja", "SimpleSpeak", expr, "かく x y z の大きさ")?;
     return Ok(());
 }
 
-/// The angle-measure intent is said the same way: 角 A の大きさ.
+/// ∠ABC = 90° with the letters not grouped: ∠ is followed by a pause, where 角 was read スミ.
+/// Two MathType names also ended in a lone 角: the angle one is かく too, and the synthetic
+/// division corner is 隅, like the corner brackets ⌜ 左上隅.
+#[test]
+fn angle_sign_before_a_pause() -> Result<()> {
+    let expr = "<math><mo>∠</mo><mi>A</mi><mi>B</mi><mi>C</mi><mo>=</mo><mn>90</mn><mo>°</mo></math>";
+    test("ja", "ClearSpeak", expr, "かく, おおもじ エー, おおもじ b おおもじ c; イコール 90 度")?;
+    test("ja", "ClearSpeak", "<math><mo>&#xEA2C;</mo></math>", "縦線付きノット かく")?;
+    test("ja", "ClearSpeak", "<math><mo>&#xEC92;</mo></math>", "組立除法 隅")?;
+    return Ok(());
+}
+
+/// The angle-measure intent is said the same way: かく A の大きさ.
 #[test]
 fn angle_measure_intent() -> Result<()> {
     let expr = "<math><mrow intent='angle-measure($x)'><mi arg='x'>x</mi></mrow></math>";
-    test("ja", "ClearSpeak", expr, "角 x の大きさ")?;
-    test("ja", "SimpleSpeak", expr, "角 x の大きさ")?;
-    // m∠ABC: the operand already says 角, so it is not said twice.
+    test("ja", "ClearSpeak", expr, "かく x の大きさ")?;
+    test("ja", "SimpleSpeak", expr, "かく x の大きさ")?;
+    // m∠ABC: the operand already says かく, so it is not said twice.
     let angle_arg = "<math><mrow intent='angle-measure($x)'><mrow arg='x' intent='angle($p)'><mi arg='p'>x</mi></mrow></mrow></math>";
-    test("ja", "ClearSpeak", angle_arg, "角 x の大きさ")?;
-    test("ja", "SimpleSpeak", angle_arg, "角 x の大きさ")?;
+    test("ja", "ClearSpeak", angle_arg, "かく x の大きさ")?;
+    test("ja", "SimpleSpeak", angle_arg, "かく x の大きさ")?;
     let sign_arg = "<math><mrow intent='angle-measure($x)'><mi>m</mi><mrow arg='x'><mo>&#x2220;</mo><mi>x</mi></mrow></mrow></math>";
-    test("ja", "ClearSpeak", sign_arg, "角 x の大きさ")?;
-    test("ja", "SimpleSpeak", sign_arg, "角 x の大きさ")?;
-    // A silent angle does not say 角 itself, so it is said here.
+    test("ja", "ClearSpeak", sign_arg, "かく x の大きさ")?;
+    test("ja", "SimpleSpeak", sign_arg, "かく x の大きさ")?;
+    // A silent angle does not say かく itself, so it is said here.
     let silent_arg = "<math><mrow intent='angle-measure($x)'><mrow arg='x' intent='angle:silent($p)'><mi arg='p'>x</mi></mrow></mrow></math>";
-    test("ja", "ClearSpeak", silent_arg, "角 x の大きさ")?;
-    test("ja", "SimpleSpeak", silent_arg, "角 x の大きさ")?;
+    test("ja", "ClearSpeak", silent_arg, "かく x の大きさ")?;
+    test("ja", "SimpleSpeak", silent_arg, "かく x の大きさ")?;
     // A silent angle-measure says only its operand.
     let silent_measure = "<math><mrow intent='angle-measure:silent($x)'><mi arg='x'>x</mi></mrow></math>";
     test("ja", "ClearSpeak", silent_measure, "x")?;
@@ -1056,6 +1106,40 @@ fn shape_names_read_correctly() -> Result<()> {
         let expr = format!("<math><mo>{ch}</mo></math>");
         test("ja", "ClearSpeak", &expr, expected)?;
     }
+    return Ok(());
+}
+
+/// Symbol names that Open JTalk misread, found by speaking the zh-cn tests' symbols in ja:
+/// 環 was タマキ, 魚の尾 ギョノオ, 凹辺 オーベ, 太 before a noun フトシ, 小文字 after a space
+/// コモンジ, 形 after 小なり カタチ, 白 before すみ ハク and before 羽根 シラ, 真直度 マッスグタビ
+/// and 辺 after 開いた アタリ.
+#[test]
+fn misread_symbol_names() -> Result<()> {
+    for (ch, expected) in [
+        ("&#x232C;", "ベンゼンかん"),
+        ("&#x297C;", "左向きさかなの尾"),
+        ("&#x27E1;", "おうへん白ひし形"),
+        ("&#x2795;", "太いプラス"),
+        ("&#x2B58;", "太い丸"),
+        ("&#x02B0;", "修飾文字 こもじ エイチ"),
+        ("&#xEC48;", "小なりがたの全角結合"),
+        ("&#x3016;", "白いすみ付きカッコ"),
+        ("&#x27B3;", "白い羽根付き右向き矢印"),
+        ("&#x23E4;", "しんちょく度"),
+        ("&#x29A8;", "開いたへんが上と右を指す矢印で終わる測定角"),
+    ] {
+        let expr = format!("<math><mo>{ch}</mo></math>");
+        test("ja", "ClearSpeak", &expr, expected)?;
+    }
+    return Ok(());
+}
+
+/// U+23E6 (AC current) had spell: "ac", which is the XPath for a child element named ac,
+/// not the string, so the whole expression failed to speak. It is 交流 in Japanese.
+#[test]
+fn ac_current_symbol() -> Result<()> {
+    let expr = "<math><mi>q</mi><mo>&#x23E6;</mo><mi>q</mi></math>";
+    test("ja", "ClearSpeak", expr, "q 交流 q")?;
     return Ok(());
 }
 
@@ -2084,7 +2168,7 @@ fn leaf_intent_uses_intent_mappings() -> Result<()> {
         ("plus", "エー プラス b"),
         ("member-of", "エー げんオブ b"),
         ("factorial", "エー 階乗 b"),
-        ("angle", "エー 角 b"),
+        ("angle", "エー かく b"),
         ("gradient", "エー 勾配 b"),
         ("not-in-mappings", "エー not in mappings b"),
     ] {
