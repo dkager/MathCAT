@@ -1788,7 +1788,6 @@ mod invulvelden {
 
     /// Invulveld met drie punten "..." in een mo, op de plaats van de tweede term: de operatoren eromheen houden hun spaties.
     #[test]
-    #[ignore = "canonicalize turns <mo>...</mo> into \"…\" but keeps it an mo, so it is not an operand (see canonicalize.rs)"]
     fn mo_midden() -> Result<()> {
         let expr = r#"<math><mrow><mn>3</mn><mo>+</mo><mo>...</mo><mo>=</mo><mn>5</mn></mrow></math>"#;
         test_braille("Dedicon", expr, r#"3 + ... = 5"#)?;
@@ -1797,7 +1796,6 @@ mod invulvelden {
 
     /// Invulveld met drie punten "..." in een mo, op de plaats van de eerste term: de operatoren eromheen houden hun spaties.
     #[test]
-    #[ignore = "canonicalize turns <mo>...</mo> into \"…\" but keeps it an mo, so it is not an operand (see canonicalize.rs)"]
     fn mo_links() -> Result<()> {
         let expr = r#"<math><mrow><mo>...</mo><mo>+</mo><mn>2</mn><mo>=</mo><mn>5</mn></mrow></math>"#;
         test_braille("Dedicon", expr, r#"... + 2 = 5"#)?;
